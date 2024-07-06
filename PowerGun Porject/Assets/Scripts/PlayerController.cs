@@ -10,7 +10,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed;
     [SerializeField] bool isGround;
     [SerializeField] float groundCheckLength;
+    [SerializeField] float jumpForce;
 
+    
     Rigidbody2D rigid;
     BoxCollider2D boxCollider;
     Animator anim;
@@ -18,6 +20,9 @@ public class PlayerController : MonoBehaviour
     float verticalVelocity = 0;
     
     bool isJump;
+    bool doubleJump = false;
+
+    Camera mainCam;
 
 
     private void Awake()
@@ -29,7 +34,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        
+        mainCam = Camera.main;
     }
 
     
@@ -38,11 +43,27 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         groundCheck();
+
         moving();
+        Jump();
 
         gravityCheck();
 
         doAnim();
+    }
+
+    private void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) == true)
+        {
+            isJump = true;
+            if(Input.GetKeyDown(KeyCode.Space) == true && isJump == true)
+            {
+                doubleJump = true;
+            }
+        }
+        
+
     }
 
     private void gravityCheck()
@@ -50,7 +71,28 @@ public class PlayerController : MonoBehaviour
         if(isGround == false)
         {
             verticalVelocity += Physics.gravity.y * Time.deltaTime;
+            if(verticalVelocity < -10)
+            {
+                verticalVelocity = -10;
+            }
         }
+        else if(isJump == true)
+        {
+            isJump = false;
+            verticalVelocity = jumpForce;
+        }
+        else if(isJump == true && doubleJump == true)
+        {
+            isJump = false;
+            doubleJump = false;
+            verticalVelocity = jumpForce * 0.8f;
+        }
+        else if(isGround == true)
+        {
+            verticalVelocity = 0;
+        }
+        rigid.velocity = new Vector2(rigid.velocity.x, verticalVelocity);
+      
     }
 
     private void moving()
