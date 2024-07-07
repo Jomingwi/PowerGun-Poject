@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,7 +21,7 @@ public class PlayerController : MonoBehaviour
     float verticalVelocity = 0;
     
     bool isJump;
-    bool doubleJump = false;
+    bool doubleJump;
 
     Camera mainCam;
 
@@ -46,53 +47,57 @@ public class PlayerController : MonoBehaviour
 
         moving();
         Jump();
+        camMoving();
 
         gravityCheck();
 
         doAnim();
     }
 
+    /// <summary>
+    /// 점프와 더블점프 
+    /// </summary>
     private void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) == true)
         {
             isJump = true;
-            if(Input.GetKeyDown(KeyCode.Space) == true && isJump == true)
-            {
-                doubleJump = true;
-            }
         }
-        
 
+        if (isJump == false && Input.GetKeyDown(KeyCode.Space) == true)
+        {
+            doubleJump = true;
+        }
     }
 
     private void gravityCheck()
     {
-        if(isGround == false)
+        if (isGround == false)
         {
             verticalVelocity += Physics.gravity.y * Time.deltaTime;
-            if(verticalVelocity < -10)
+            if (verticalVelocity < -10)
             {
                 verticalVelocity = -10;
             }
         }
-        else if(isJump == true)
+        else if (isJump == true)
         {
             isJump = false;
             verticalVelocity = jumpForce;
         }
-        else if(isJump == true && doubleJump == true)
+        else if (doubleJump == true)
         {
-            isJump = false;
             doubleJump = false;
-            verticalVelocity = jumpForce * 0.8f;
+            verticalVelocity = jumpForce * 2.0f;
         }
-        else if(isGround == true)
+        
+
+
+        else if (isGround == true)
         {
             verticalVelocity = 0;
         }
         rigid.velocity = new Vector2(rigid.velocity.x, verticalVelocity);
-      
     }
 
     private void moving()
@@ -102,17 +107,33 @@ public class PlayerController : MonoBehaviour
         rigid.velocity = moveDir;
     }
 
+    private void camMoving()
+    {
+        Vector3 playerScale = transform.localScale;
+        if(playerScale.x != -1.0f && moveDir.x > 0)
+        {
+            playerScale.x = -1.0f;
+        }
+        else if(playerScale.x != 1.0f && moveDir.x < 0)
+        {
+            playerScale.x = 1.0f;
+        }
+        transform.localScale = playerScale;
+    }
+
     private void groundCheck()
     {
         isGround = false;
+
+        if (verticalVelocity > 0f) return;
 
         RaycastHit2D hit = 
             Physics2D.BoxCast(boxCollider.bounds.center , boxCollider.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
         //박스 센터를 기준으로 박스 사이즈를 체크하고 밑에서 그라운드와 닿는지 체크
 
-        if(hit)
+        if(hit) 
         {
-            isGround = true;
+            isGround = true; //닿으면 true로 변경
         }
     }
 
