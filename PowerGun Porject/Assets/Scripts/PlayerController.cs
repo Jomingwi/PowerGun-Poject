@@ -27,19 +27,20 @@ public class PlayerController : MonoBehaviour
 
     [Header("dash")]
     [SerializeField] float dashSpeed;
-    [SerializeField] float dashCoolTime = 2;
+    [SerializeField] float dashCoolTime = 5f;
     [SerializeField] float dashTime = 0.5f;
     float dashTimer = 0f;
     float dashCoolTimer= 0f;
-    bool isdash;
+    bool isDash;
 
-    [Header("슬라이딩")]
-    [SerializeField] float slideSpeed;
-    [SerializeField] float slideCoolTime =2;
-    [SerializeField] float slideTime = 0.5f;
-    float slideTimer = 0f;
-    float slideCoolTimer= 0f;
-    bool isSlide;
+    //[Header("슬라이딩")]
+    //[SerializeField] GameObject objSlideTime;
+    //[SerializeField] float slideSpeed;
+    //[SerializeField] float slideCoolTime =2;
+    //[SerializeField] float slideTime = 0.5f;
+    //float slideTimer = 0f;
+    //float slideCoolTimer= 0f;
+    //bool isSlide;
 
 
     
@@ -65,13 +66,13 @@ public class PlayerController : MonoBehaviour
     {
         coolTimeCheck();
         groundCheck();
+
+       
         
         moving();
         jump();
         camMoving();
         dash();
-        
-       
 
         gravityCheck();
 
@@ -80,8 +81,16 @@ public class PlayerController : MonoBehaviour
 
     private void dash()
     {
-        
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCoolTimer == 0f && dashTimer == 0f )
+        {
+            dashCoolTimer = dashCoolTime;
+            dashTimer = dashTime;
+            verticalVelocity = 0f;
+            rigid.velocity = new Vector2(transform.localScale.x > 0 ? dashSpeed : -dashSpeed, verticalVelocity);
+            anim.SetTrigger("isDash");
+        }
     }
+
 
     private void coolTimeCheck()
     {
@@ -91,6 +100,24 @@ public class PlayerController : MonoBehaviour
             if(doubleJumpCoolTimer < 0f)
             {
                 doubleJumpCoolTimer = 0f;
+            }
+        }
+
+        if(dashCoolTimer > 0f)
+        {
+            dashCoolTimer -= Time .deltaTime;
+            if(dashCoolTimer < 0f)
+            {
+                dashCoolTimer = 0f;
+            }
+        }
+
+        if(dashTimer > 0f)
+        {
+            dashTimer -= Time .deltaTime;
+            if(dashTimer < 0f)
+            {
+                dashTimer = 0f;
             }
         }
     }
@@ -204,7 +231,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetInteger("Horizontal", (int)moveDir.x);
         anim.SetBool("isGround", isGround);
-        anim.SetBool("isDash", isdash);
-        anim.SetBool("isSlide" , isSlide);
+       
+        //anim.SetBool("isSlide", isSlide);
     }
 }
