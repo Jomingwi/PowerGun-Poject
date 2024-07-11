@@ -25,6 +25,25 @@ public class PlayerController : MonoBehaviour
     bool isJump;
     bool doubleJump;
 
+    [Header("dash")]
+    [SerializeField] float dashSpeed;
+    [SerializeField] float dashCoolTime = 2;
+    [SerializeField] float dashTime = 0.5f;
+    float dashTimer = 0f;
+    float dashCoolTimer= 0f;
+    bool isdash;
+
+    [Header("슬라이딩")]
+    [SerializeField] float slideSpeed;
+    [SerializeField] float slideCoolTime =2;
+    [SerializeField] float slideTime = 0.5f;
+    float slideTimer = 0f;
+    float slideCoolTimer= 0f;
+    bool isSlide;
+
+
+    
+
     Camera mainCam;
 
 
@@ -42,21 +61,26 @@ public class PlayerController : MonoBehaviour
     }
 
     
-
-    
     void Update()
     {
         coolTimeCheck();
         groundCheck();
         
         moving();
-        Jump();
+        jump();
         camMoving();
+        dash();
+        
        
 
         gravityCheck();
 
         doAnim();
+    }
+
+    private void dash()
+    {
+        
     }
 
     private void coolTimeCheck()
@@ -78,7 +102,7 @@ public class PlayerController : MonoBehaviour
     /// 더블점프는 바닥에 닿지않고 쿨타임이 돌아야하고 스페이스바를 누르면 가능
     /// 점프를 계속하는것을 방지하기위해 한번 누르면 바닥에 닿지 않으면 return하도록 만듬
     /// </summary>
-    private void Jump()
+    private void jump()
     {
         if (isGround == false)
         {
@@ -96,10 +120,11 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// 플레이어가 점프했을때 내려오는 속도와 중력 체크
+    /// </summary>
     private void gravityCheck()
     {
-        
-        
         if (doubleJump == true)
         {
             doubleJump = false;
@@ -127,6 +152,9 @@ public class PlayerController : MonoBehaviour
         rigid.velocity = new Vector2(rigid.velocity.x , verticalVelocity);
     }
 
+    /// <summary>
+    /// 플레이어 움직임과 속도
+    /// </summary>
     private void moving()
     {
         moveDir.x = Input.GetAxisRaw("Horizontal") * moveSpeed ;
@@ -134,6 +162,10 @@ public class PlayerController : MonoBehaviour
         rigid.velocity = moveDir;
     }
 
+    /// <summary>
+    /// 플레이어가 왼쪽으로보면 플레이어의 자식인 카메라와 자식들이 왼쪽으로 보고
+    /// 오른쪽으로 움직이면 오른쪽으로 보도록 구현
+    /// </summary>
     private void camMoving()
     {
         Vector3 playerScale = transform.localScale;
@@ -148,6 +180,9 @@ public class PlayerController : MonoBehaviour
         transform.localScale = playerScale;
     }
 
+    /// <summary>
+    /// 플레이어가 바닥과 닿는지 체크
+    /// </summary>
     private void groundCheck()
     {
         isGround = false;
@@ -169,5 +204,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetInteger("Horizontal", (int)moveDir.x);
         anim.SetBool("isGround", isGround);
+        anim.SetBool("isDash", isdash);
+        anim.SetBool("isSlide" , isSlide);
     }
 }
