@@ -1,29 +1,32 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Transactions;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("플레이어 이동")]
-    [SerializeField] float moveSpeed;
-    [SerializeField] bool isGround;
-    [SerializeField] float groundCheckLength;
-    [SerializeField] float jumpForce;
-
-    
     Rigidbody2D rigid;
     BoxCollider2D boxCollider;
     Animator anim;
     Vector3 moveDir;
     float verticalVelocity = 0;
-    
+
+
+    [Header("플레이어 이동")]
+    [SerializeField] float moveSpeed;
+    [SerializeField] bool isGround;
+    [SerializeField] float groundCheckLength;
+    [SerializeField] float jumpForce;
+    [SerializeField] float doublejumpForce;
+    [SerializeField] float doubleJumpCoolTime = 2f;
+    float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
 
     Camera mainCam;
+
 
 
     private void Awake()
@@ -43,36 +46,68 @@ public class PlayerController : MonoBehaviour
     
     void Update()
     {
+        coolTimeCheck();
         groundCheck();
-
+        
         moving();
         Jump();
         camMoving();
+       
 
         gravityCheck();
 
         doAnim();
     }
 
+    private void coolTimeCheck()
+    {
+        if (doubleJumpCoolTimer > 0f)
+        {
+            doubleJumpCoolTimer -= Time.deltaTime;
+            if(doubleJumpCoolTimer < 0f)
+            {
+                doubleJumpCoolTimer = 0f;
+            }
+        }
+    }
+
+
+
     /// <summary>
     /// 점프와 더블점프 
+    /// 더블점프는 바닥에 닿지않고 쿨타임이 돌아야하고 스페이스바를 누르면 가능
+    /// 점프를 계속하는것을 방지하기위해 한번 누르면 바닥에 닿지 않으면 return하도록 만듬
     /// </summary>
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) == true)
+        if (isGround == false)
+        {
+            if (doubleJumpCoolTimer ==0 && Input.GetKeyDown(KeyCode.Space) == true)
+            {
+                doubleJump = true;
+            }
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) == true )
         {
             isJump = true;
         }
-
-        if (isJump == false && Input.GetKeyDown(KeyCode.Space) == true)
-        {
-            doubleJump = true;
-        }
+        
     }
 
     private void gravityCheck()
     {
-        if (isGround == false)
+        
+        
+        if (doubleJump == true)
+        {
+            doubleJump = false;
+            verticalVelocity = doublejumpForce;
+            doubleJumpCoolTimer = doubleJumpCoolTime;
+        }
+
+        else if (isGround == false)
         {
             verticalVelocity += Physics.gravity.y * Time.deltaTime;
             if (verticalVelocity < -10)
@@ -85,19 +120,11 @@ public class PlayerController : MonoBehaviour
             isJump = false;
             verticalVelocity = jumpForce;
         }
-        else if (doubleJump == true)
-        {
-            doubleJump = false;
-            verticalVelocity = jumpForce * 2.0f;
-        }
-        
-
-
         else if (isGround == true)
         {
             verticalVelocity = 0;
         }
-        rigid.velocity = new Vector2(rigid.velocity.x, verticalVelocity);
+        rigid.velocity = new Vector2(rigid.velocity.x , verticalVelocity);
     }
 
     private void moving()
