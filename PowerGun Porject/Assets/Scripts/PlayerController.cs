@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Transactions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
+   
 
     [Header("dash")]
     [SerializeField] float dashSpeed;
@@ -32,15 +34,16 @@ public class PlayerController : MonoBehaviour
     float dashTimer = 0f;
     float dashCoolTimer= 0f;
     bool isDash;
+   
 
-    //[Header("슬라이딩")]
-    //[SerializeField] GameObject objSlideTime;
-    //[SerializeField] float slideSpeed;
-    //[SerializeField] float slideCoolTime =2;
-    //[SerializeField] float slideTime = 0.5f;
-    //float slideTimer = 0f;
-    //float slideCoolTimer= 0f;
-    //bool isSlide;
+    [Header("슬라이딩")]
+    [SerializeField] GameObject objSlideTime;
+    [SerializeField] float slideSpeed = 10f;
+    [SerializeField] float slideCoolTime =2;
+    [SerializeField] float slideTime = 0.5f;
+    float slideTimer = 0f;
+    float slideCoolTimer= 0f;
+    bool isSlide;
 
 
     
@@ -67,27 +70,51 @@ public class PlayerController : MonoBehaviour
         coolTimeCheck();
         groundCheck();
 
-       
+
         
         moving();
         jump();
-        camMoving();
         dash();
+        slide();
+
+        camMoving();
+        
 
         gravityCheck();
 
         doAnim();
     }
 
+    private void slide()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftControl)  == true && slideCoolTimer == 0f  && slideTimer == 0f )
+        {
+            if(isGround == false) { return; }
+            isSlide = true;
+            slideCoolTimer = slideCoolTime;
+            slideTimer = slideTime;
+            verticalVelocity = 0;
+            rigid.velocity = new Vector2(transform.localScale.x > 0 ? -slideSpeed : slideSpeed, verticalVelocity);
+        }
+        if(slideTimer == 0f)
+        {
+            isSlide = false;
+        }
+    }
+
     private void dash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCoolTimer == 0f && dashTimer == 0f )
+        if (Input.GetKeyDown(KeyCode.LeftShift) == true && dashCoolTimer == 0f && dashTimer == 0f )
         {
+            isDash = true;
             dashCoolTimer = dashCoolTime;
             dashTimer = dashTime;
             verticalVelocity = 0f;
-            rigid.velocity = new Vector2(transform.localScale.x > 0 ? dashSpeed : -dashSpeed, verticalVelocity);
-            anim.SetTrigger("isDash");
+            rigid.velocity = new Vector2(transform.localScale.x > 0 ? -dashSpeed : dashSpeed, verticalVelocity);
+        }
+        if (dashTimer == 0f)
+        {
+            isDash = false;
         }
     }
 
@@ -120,6 +147,25 @@ public class PlayerController : MonoBehaviour
                 dashTimer = 0f;
             }
         }
+
+        if(slideTimer > 0f)
+        { 
+            slideTimer -= Time .deltaTime; 
+            if(slideTimer < 0f)
+            {
+                slideTimer = 0f;
+            }
+        }
+
+        if(slideCoolTimer > 0f )
+        {
+            slideCoolTimer -= Time .deltaTime;
+            if (slideCoolTimer < 0f)
+            {
+                slideCoolTimer = 0f;
+            }
+        }
+
     }
 
 
@@ -152,6 +198,16 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void gravityCheck()
     {
+        if (dashTimer > 0f)
+        {
+            return;
+        }
+
+        if (slideTimer > 0f)
+        {
+            return;
+        }
+
         if (doubleJump == true)
         {
             doubleJump = false;
@@ -184,6 +240,10 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void moving()
     {
+        if (dashTimer > 0) return;
+
+        if (slideTimer > 0) return;
+
         moveDir.x = Input.GetAxisRaw("Horizontal") * moveSpeed ;
         moveDir.y = rigid.velocity.y;
         rigid.velocity = moveDir;
@@ -212,6 +272,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void groundCheck()
     {
+
         isGround = false;
 
         if (verticalVelocity > 0f) return;
@@ -231,7 +292,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetInteger("Horizontal", (int)moveDir.x);
         anim.SetBool("isGround", isGround);
-       
-        //anim.SetBool("isSlide", isSlide);
+        anim.SetBool("isDash", isDash);
+        anim.SetBool("isSlide", isSlide);
     }
 }
