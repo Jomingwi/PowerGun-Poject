@@ -22,7 +22,7 @@ public class MapBound : MonoBehaviour
 
         mainCam.transform.position = new Vector3(
             Mathf.Clamp(trsPlayer.position.x, curBound.min.x, curBound.max.x),
-            Mathf.Clamp(trsPlayer.position.y, curBound.min.y, curBound.max.y + 2),
+            Mathf.Clamp(trsPlayer.position.y, curBound.min.y, curBound.max.y),
             mainCam.transform.position.z
             ) ;
     }
@@ -40,6 +40,6 @@ public class MapBound : MonoBehaviour
         float maxX = curBound.max.x - width;
         float maxY = curBound.max.y - height;
 
-        curBound.SetMinMax(new Vector3(minX,minY) , new Vector3(maxX,maxY));
+        curBound.SetMinMax(new Vector3(minX,minY) , new Vector3(maxX,maxY)); //최소값과 최대값을 설정할수 있는 함수
     }
 }

@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,9 +25,11 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
-   
+
 
     [Header("dash")]
+    [SerializeField] Image dashImageFill;
+    [SerializeField] TMP_Text textDashCoolTime;
     [SerializeField] float dashSpeed;
     [SerializeField] float dashCoolTime = 5f;
     [SerializeField] float dashTime = 0.5f;
@@ -37,7 +39,8 @@ public class PlayerController : MonoBehaviour
    
 
     [Header("슬라이딩")]
-    [SerializeField] GameObject objSlideTime;
+    [SerializeField] Image slideImageFill;
+    [SerializeField] TMP_Text textSlideCoolTime;
     [SerializeField] float slideSpeed = 10f;
     [SerializeField] float slideCoolTime =2;
     [SerializeField] float slideTime = 0.5f;
@@ -57,6 +60,7 @@ public class PlayerController : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
+        initUI();
     }
 
     void Start()
@@ -132,14 +136,23 @@ public class PlayerController : MonoBehaviour
 
         if(dashCoolTimer > 0f)
         {
+            
             dashCoolTimer -= Time .deltaTime;
             if(dashCoolTimer < 0f)
             {
                 dashCoolTimer = 0f;
+                
             }
+            dashImageFill.fillAmount = 1 - dashCoolTimer / dashCoolTime;
+            textDashCoolTime.text = dashCoolTimer.ToString("F1");
+            textDashCoolTime.enabled = true;
+        }
+        if (dashCoolTimer == 0f)
+        {
+            textDashCoolTime.enabled = false;
         }
 
-        if(dashTimer > 0f)
+        if (dashTimer > 0f)
         {
             dashTimer -= Time .deltaTime;
             if(dashTimer < 0f)
@@ -159,11 +172,20 @@ public class PlayerController : MonoBehaviour
 
         if(slideCoolTimer > 0f )
         {
+           
             slideCoolTimer -= Time .deltaTime;
             if (slideCoolTimer < 0f)
             {
                 slideCoolTimer = 0f;
             }
+
+            slideImageFill.fillAmount = 1 - slideCoolTimer / slideCoolTime;
+            textSlideCoolTime.text = slideCoolTimer.ToString("F1");
+            textSlideCoolTime.enabled = true;
+        }
+        if(slideCoolTimer ==0f)
+        {
+            textSlideCoolTime.enabled = false;
         }
 
     }
@@ -294,5 +316,16 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isGround", isGround);
         anim.SetBool("isDash", isDash);
         anim.SetBool("isSlide", isSlide);
+    }
+
+    private void initUI()
+    {
+        dashImageFill.fillAmount = 0;
+        textDashCoolTime.text = "";
+        textDashCoolTime.enabled = false;
+
+        slideImageFill.fillAmount = 0;
+        textSlideCoolTime.text = "";
+        textSlideCoolTime.enabled = false;
     }
 }
