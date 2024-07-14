@@ -9,11 +9,12 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rigid;
-    BoxCollider2D boxCollider;
+    BoxCollider2D boxColl;
     Animator anim;
     Vector3 moveDir;
     float verticalVelocity = 0;
-
+    
+   
 
     [Header("플레이어 이동")]
     [SerializeField] float moveSpeed;
@@ -25,6 +26,10 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
+
+    [Header("플레이어 설정")]
+    [SerializeField] float playerHp =100;
+
 
 
     [Header("dash")]
@@ -48,17 +53,13 @@ public class PlayerController : MonoBehaviour
     float slideCoolTimer= 0f;
     bool isSlide;
 
-
-    
-
     Camera mainCam;
-
 
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxColl = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
         initUI();
     }
@@ -74,16 +75,13 @@ public class PlayerController : MonoBehaviour
         coolTimeCheck();
         groundCheck();
 
-
-        
         moving();
         jump();
         dash();
         slide();
 
         camMoving();
-        
-
+      
         gravityCheck();
 
         doAnim();
@@ -183,10 +181,12 @@ public class PlayerController : MonoBehaviour
             textSlideCoolTime.text = slideCoolTimer.ToString("F1");
             textSlideCoolTime.enabled = true;
         }
-        if(slideCoolTimer ==0f)
+        if(slideCoolTimer == 0f)
         {
             textSlideCoolTime.enabled = false;
         }
+
+      
 
     }
 
@@ -220,12 +220,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void gravityCheck()
     {
-        if (dashTimer > 0f)
-        {
-            return;
-        }
-
-        if (slideTimer > 0f)
+        if (dashTimer > 0f || slideTimer > 0f )
         {
             return;
         }
@@ -262,9 +257,10 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void moving()
     {
-        if (dashTimer > 0) return;
-
-        if (slideTimer > 0) return;
+        if (dashTimer > 0 || slideTimer > 0)
+        { 
+            return; 
+        }
 
         moveDir.x = Input.GetAxisRaw("Horizontal") * moveSpeed ;
         moveDir.y = rigid.velocity.y;
@@ -300,7 +296,7 @@ public class PlayerController : MonoBehaviour
         if (verticalVelocity > 0f) return;
 
         RaycastHit2D hit = 
-            Physics2D.BoxCast(boxCollider.bounds.center , boxCollider.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
+            Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
         //박스 센터를 기준으로 박스 사이즈를 체크하고 밑에서 그라운드와 닿는지 체크
 
         if(hit) 
@@ -309,6 +305,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+   
 
     private void doAnim()
     {
@@ -328,4 +325,5 @@ public class PlayerController : MonoBehaviour
         textSlideCoolTime.text = "";
         textSlideCoolTime.enabled = false;
     }
+
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MapBound : MonoBehaviour
 {
@@ -8,12 +9,17 @@ public class MapBound : MonoBehaviour
     [SerializeField] BoxCollider2D coll;
     Bounds curBound;
     [SerializeField] Transform trsPlayer;
+    [SerializeField] Transform trsBackGround;
+
 
     void Start()
     {
         mainCam = Camera.main;
+        SpriteRenderer sprBackGround = trsBackGround.GetComponent<SpriteRenderer>();
+        
         checkBound(); 
     }
+    
 
     
     void Update()
@@ -25,6 +31,11 @@ public class MapBound : MonoBehaviour
             Mathf.Clamp(trsPlayer.position.y, curBound.min.y, curBound.max.y),
             mainCam.transform.position.z
             ) ;
+
+        trsBackGround.transform.position = new Vector3(
+            mainCam.transform.position.x, trsBackGround.position.y, 0);
+
+
     }
 
     private void checkBound()
@@ -42,4 +53,5 @@ public class MapBound : MonoBehaviour
 
         curBound.SetMinMax(new Vector3(minX,minY) , new Vector3(maxX,maxY)); //최소값과 최대값을 설정할수 있는 함수
     }
+
 }
