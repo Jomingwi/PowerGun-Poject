@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,8 +14,6 @@ public class PlayerController : MonoBehaviour
     Animator anim;
     Vector3 moveDir;
     float verticalVelocity = 0;
-    
-   
 
     [Header("플레이어 이동")]
     [SerializeField] float moveSpeed;
@@ -26,9 +25,14 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
+    float spikeHitCoolTime = 1;
+    float spikeHitCoolTimer = 0.0f;
+ 
 
     [Header("플레이어 설정")]
-    [SerializeField] float playerHp =100;
+    [SerializeField]  protected float playerHp =100;
+    [SerializeField] bool isSpike;
+    bool spikeHit;
 
 
 
@@ -56,6 +60,30 @@ public class PlayerController : MonoBehaviour
     Camera mainCam;
 
 
+    public void TriggerEnter(HitBox.ehitType type, Collider2D other)
+    {
+        if(type == HitBox.ehitType.spikeCheck)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
+            {
+                isSpike = true;
+                playerHp -= 5;
+            }
+        }
+    }
+
+    public void TriggerExit(HitBox.ehitType type , Collider2D other) 
+    {
+        if (type == HitBox.ehitType.spikeCheck)
+        {
+            if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
+            {
+                isSpike = false;
+            }
+        }
+    }
+
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -74,6 +102,7 @@ public class PlayerController : MonoBehaviour
     {
         coolTimeCheck();
         groundCheck();
+        spike();
 
         moving();
         jump();
@@ -86,6 +115,22 @@ public class PlayerController : MonoBehaviour
 
         doAnim();
     }
+
+    private void spike()
+    {
+        if (isSpike == true)
+        {
+            spikeHit = true;
+            spikeHitCoolTimer = spikeHitCoolTime;
+            rigid.velocity = new Vector2(transform.localScale.x > 0 ? 5 : -5 , jumpForce);
+        }
+        if(spikeHitCoolTimer == 0f)
+        {
+            spikeHit = false;
+        }
+        
+    }
+
 
     private void slide()
     {
@@ -123,6 +168,15 @@ public class PlayerController : MonoBehaviour
 
     private void coolTimeCheck()
     {
+        if(spikeHitCoolTimer > 0f )
+        {
+            spikeHitCoolTimer -= Time.deltaTime;
+            if(spikeHitCoolTimer < 0f )
+            {
+                spikeHitCoolTimer = 0f;
+            }
+        }
+
         if (doubleJumpCoolTimer > 0f)
         {
             doubleJumpCoolTimer -= Time.deltaTime;
@@ -186,8 +240,6 @@ public class PlayerController : MonoBehaviour
             textSlideCoolTime.enabled = false;
         }
 
-      
-
     }
 
 
@@ -224,6 +276,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+        
 
         if (doubleJump == true)
         {
@@ -257,7 +310,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void moving()
     {
-        if (dashTimer > 0 || slideTimer > 0)
+        if (dashTimer > 0 || slideTimer > 0 || spikeHitCoolTimer > 0)
         { 
             return; 
         }
@@ -313,15 +366,16 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isGround", isGround);
         anim.SetBool("isDash", isDash);
         anim.SetBool("isSlide", isSlide);
+        anim.SetBool("isSpike", spikeHit);
     }
 
     private void initUI()
     {
-        dashImageFill.fillAmount = 0;
+        dashImageFill.fillAmount = 1;
         textDashCoolTime.text = "";
         textDashCoolTime.enabled = false;
 
-        slideImageFill.fillAmount = 0;
+        slideImageFill.fillAmount = 1;
         textSlideCoolTime.text = "";
         textSlideCoolTime.enabled = false;
     }
