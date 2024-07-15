@@ -8,6 +8,7 @@ public class HitBox : MonoBehaviour
     public enum ehitType
     {
         spikeCheck,
+        bodyCheck,
     }
     
     PlayerController playerController;

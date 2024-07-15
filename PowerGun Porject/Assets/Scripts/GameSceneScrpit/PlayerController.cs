@@ -15,6 +15,12 @@ public class PlayerController : MonoBehaviour
     Vector3 moveDir;
     float verticalVelocity = 0;
 
+    GameObject fabExplosion;
+    GameManager gameManager;
+    SpriteRenderer spriteRenderer;
+    
+
+
     [Header("플레이어 이동")]
     [SerializeField] float moveSpeed;
     [SerializeField] bool isGround;
@@ -30,8 +36,9 @@ public class PlayerController : MonoBehaviour
  
 
     [Header("플레이어 설정")]
-    [SerializeField]  protected float playerHp =100;
-    [SerializeField] bool isSpike;
+    [SerializeField] float maxHp = 100;
+    [SerializeField] float curHp;
+    bool isSpike;
     bool spikeHit;
 
 
@@ -62,15 +69,36 @@ public class PlayerController : MonoBehaviour
 
     public void TriggerEnter(HitBox.ehitType type, Collider2D other)
     {
-        if(type == HitBox.ehitType.spikeCheck)
+        if(type == HitBox.ehitType.bodyCheck)
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
             {
                 isSpike = true;
-                playerHp -= 5;
+                Hit();
+            }
+            if (other.tag == Tool.GetTag(GameTags.Enemy))
+            {
+                Hit();
             }
         }
+       
     }
+
+    private void Hit()
+    {
+        curHp--;
+        if (curHp <= 0)
+        {
+            Destroy(gameObject);
+            GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
+            Explosion goSc = go.GetComponent<Explosion>();
+
+            goSc.ImageSize(spriteRenderer.sprite.rect.width);
+        }
+    }
+
+
+
 
     public void TriggerExit(HitBox.ehitType type , Collider2D other) 
     {
@@ -89,12 +117,18 @@ public class PlayerController : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxColl = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
+        spriteRenderer = transform.GetComponent<SpriteRenderer>();
         initUI();
+
+        curHp = maxHp;
     }
 
     void Start()
     {
         mainCam = Camera.main;
+        gameManager = GameManager.Instance;
+        fabExplosion = gameManager.FabExplosion;
+        gameManager.Player = this;
     }
 
     
@@ -116,6 +150,10 @@ public class PlayerController : MonoBehaviour
         doAnim();
     }
 
+    
+   
+
+
     private void spike()
     {
         if (isSpike == true)
@@ -128,7 +166,6 @@ public class PlayerController : MonoBehaviour
         {
             spikeHit = false;
         }
-        
     }
 
 

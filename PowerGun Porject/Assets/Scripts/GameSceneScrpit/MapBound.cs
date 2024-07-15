@@ -7,7 +7,7 @@ public class MapBound : MonoBehaviour
 {
     Camera mainCam;
     [SerializeField] BoxCollider2D coll;
-    Bounds curBound;
+    public Bounds curBound;
     [SerializeField] Transform trsPlayer;
     [SerializeField] Transform trsBackGround;
 
@@ -15,8 +15,6 @@ public class MapBound : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
-        SpriteRenderer sprBackGround = trsBackGround.GetComponent<SpriteRenderer>();
-        
         checkBound(); 
     }
     
@@ -38,7 +36,7 @@ public class MapBound : MonoBehaviour
 
     }
 
-    private void checkBound()
+    public void checkBound()
     {
         float height = mainCam.orthographicSize;
         float width = height * mainCam.aspect; // aspect  => ∫Ò¿≤ width / height

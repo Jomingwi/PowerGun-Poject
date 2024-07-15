@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Spike
+  - Enemy
+  - Bullet
+  - Skill
   layers:
   - Default
   - TransparentFX
