@@ -1,0 +1,59 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    public enum eEnemyType
+    {
+        EnemyFly,
+        EnemyWalk,
+        EnemyDragon,
+        EnemyBoss,
+    }
+
+    [SerializeField] protected eEnemyType enemyType;
+
+    [SerializeField] protected float moveSpeed;
+    [SerializeField] protected float enemyHP;
+     bool isDie;
+     GameObject fabExplosion;
+     GameManager gameManager;
+    SpriteRenderer spriteRenderer;
+
+    private void Awake()
+    {
+        spriteRenderer = transform.GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+       gameManager = GameManager.Instance;
+        fabExplosion = gameManager.FabExplosion;
+    }
+
+    public void Hit()
+    {
+        if(isDie == true)
+        {
+            return;
+        }
+
+        if (enemyHP <= 0f)
+        {
+            isDie = true;
+            Destroy(gameObject);
+            
+            GameObject go = Instantiate(fabExplosion, transform.position , Quaternion.identity , transform.parent);
+            Explosion goSc = go.GetComponent<Explosion>();
+            goSc.ImageSize(spriteRenderer.sprite.rect.width);
+
+            gameManager.enemyKillCount();
+        }
+    }
+
+    
+
+
+}
