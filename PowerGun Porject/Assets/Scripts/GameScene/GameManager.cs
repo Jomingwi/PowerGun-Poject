@@ -10,9 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     GameObject fabExplosion;
-    
-
-
+    Camera mainCam;
 
     [Header("적기")]
     [SerializeField] List<GameObject> listEnemy;
@@ -22,14 +20,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool isSpawn;
     [SerializeField] Transform trsSpawnPos;
     [SerializeField] Transform trsDynamicObject;
-    float enemyMaxSpawnCount;
-    float enemySpawnCount;
+    [SerializeField] float enemyMaxSpawnCount = 20;
+    float enemySpawnCount = 0f;
 
 
     [Header("적 체력 게이지")]
     [SerializeField] GameHp gameHP;
-    [SerializeField] Slider Slider;
+    [SerializeField] Slider slider;
     [SerializeField] Image imgEnemyFillSlider;
+    [SerializeField] TMP_Text enemyKillCountText;
+    [SerializeField] TMP_Text enemyMaxKillCountText;
 
 
 
@@ -76,26 +76,35 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         fabExplosion = Resources.Load<GameObject>("Effect/Explosion");
+        isSpawn = true;
 
+        initSlider();
+        spawnCheck();
     }
 
     private void Start()
     {
-        
+        mainCam = Camera.main;
+        enemyCreate();
     }
 
     private void Update()
     {
-        enemyCreate();
+       
     }
-
-
+    private void spawnCheck()
+    {
+        if(isSpawn == true)
+        {
+            enemyCreate();
+        }
+    }
 
 
     public void enemyCreate()
     {
         if (isSpawn == false) { return; }
-        if(enemySpawnCount < enemyMaxSpawnCount && isSpawn == true)
+        if(enemySpawnCount < enemyMaxSpawnCount)
         {
             enemySpawnCount = enemyMaxSpawnCount;
 
@@ -117,20 +126,46 @@ public class GameManager : MonoBehaviour
                 defaultPos.y = player.transform.position.y;
                 defaultPos.x *= -player.transform.localScale.x;
             }
+
+           
         }
         
     }
 
+    public void SetHp(float _maxHp , float _curHp)
+    {
+        gameHP.SetHp(_maxHp, _curHp);
+    }
+
+
+    /// <summary>
+    /// 전체 킬에서 마이너스됨
+    /// </summary>
     public void enemyKillCount()
     {
         enemySpawnCount--;
     }
 
-   /// <summary>
-   /// 포지션은 기본값으로 잡고 적이 없으면 false로 리턴하고 적이 생성되어 있으면 포지션에 에너미 포지션을 넣어준다음 true를 리턴
-   /// </summary>
-   /// <param name="_pos"></param>
-   /// <returns></returns>
+    private void initSlider()
+    {
+        enemySpawnCount = enemyMaxSpawnCount;
+        slider.minValue = 0;
+        slider.maxValue = enemyMaxSpawnCount;
+        slider.value = 0;
+        modifySlider();
+    }
+
+    public void modifySlider()
+    {
+        slider.value = enemySpawnCount;
+        enemyKillCountText.text = $"{enemySpawnCount.ToString("d2")} / {enemyMaxSpawnCount.ToString("d2")}";
+    }
+
+    /// <summary>
+    /// 포지션은 기본값으로 잡고 적이 없으면 false로 리턴하고 적이 생성되어 있으면 포지션에 에너미 포지션을 넣어준다음 true를 리턴
+    /// </summary>
+    /// <param name="_pos"></param>
+    /// <returns></returns>
     public bool EnemyPos(out Vector2 _pos)
     {
         _pos = default;
@@ -149,13 +184,7 @@ public class GameManager : MonoBehaviour
         if(player == null) { return; }
     }
 
-    private void enemySlider()
-    {
-        Slider.minValue = enemySpawnCount;
-        Slider.maxValue = enemyMaxSpawnCount;
-
-        enemySpawnCount = enemyMaxSpawnCount;
-    }
+    
 
 
 

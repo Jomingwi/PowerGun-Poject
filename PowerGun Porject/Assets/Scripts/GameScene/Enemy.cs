@@ -17,9 +17,9 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float enemyHP;
-     bool isDie;
-     GameObject fabExplosion;
-     GameManager gameManager;
+    bool isDie;
+    GameObject fabExplosion;
+    GameManager gameManager;
     SpriteRenderer spriteRenderer;
 
     private void Awake()
@@ -29,16 +29,17 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-       gameManager = GameManager.Instance;
+        gameManager = GameManager.Instance;
         fabExplosion = gameManager.FabExplosion;
     }
 
-    public void Hit()
+    public void Hit(float damage)
     {
         if(isDie == true)
         {
             return;
         }
+        enemyHP -= damage;
 
         if (enemyHP <= 0f)
         {

@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Transactions;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,15 +29,16 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
-    float spikeHitCoolTime = 1;
-    float spikeHitCoolTimer = 0.0f;
+    float playerDamageCoolTime = 0.3f;
+    float playerDamageCoolTimer = 0.0f;
  
 
     [Header("플레이어 설정")]
     [SerializeField] float maxHp = 100;
     [SerializeField] float curHp;
-    bool isSpike;
-    bool spikeHit;
+    bool isHit;
+    bool playerDamage;
+    
 
 
 
@@ -73,40 +72,29 @@ public class PlayerController : MonoBehaviour
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
             {
-                isSpike = true;
+                isHit = true;
                 Hit();
             }
             if (other.tag == Tool.GetTag(GameTags.Enemy))
             {
+                isHit = true;
                 Hit();
             }
         }
        
     }
 
-    private void Hit()
-    {
-        curHp--;
-        if (curHp <= 0)
-        {
-            Destroy(gameObject);
-            GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
-            Explosion goSc = go.GetComponent<Explosion>();
-
-            goSc.ImageSize(spriteRenderer.sprite.rect.width);
-        }
-    }
-
-
-
-
     public void TriggerExit(HitBox.ehitType type , Collider2D other) 
     {
-        if (type == HitBox.ehitType.spikeCheck)
+        if (type == HitBox.ehitType.bodyCheck)
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
             {
-                isSpike = false;
+                isHit = false;
+            }
+            if (other.tag == Tool.GetTag(GameTags.Enemy))
+            {
+                isHit = false;
             }
         }
     }
@@ -136,7 +124,7 @@ public class PlayerController : MonoBehaviour
     {
         coolTimeCheck();
         groundCheck();
-        spike();
+        playerHit();
 
         moving();
         jump();
@@ -154,17 +142,18 @@ public class PlayerController : MonoBehaviour
    
 
 
-    private void spike()
+    private void playerHit()
     {
-        if (isSpike == true)
+        if (isHit == true)
         {
-            spikeHit = true;
-            spikeHitCoolTimer = spikeHitCoolTime;
+            playerDamage = true;
+            playerDamageCoolTimer = playerDamageCoolTime;
             rigid.velocity = new Vector2(transform.localScale.x > 0 ? 5 : -5 , jumpForce);
         }
-        if(spikeHitCoolTimer == 0f)
+
+        if(playerDamageCoolTimer == 0f)
         {
-            spikeHit = false;
+            playerDamage = false;
         }
     }
 
@@ -205,12 +194,12 @@ public class PlayerController : MonoBehaviour
 
     private void coolTimeCheck()
     {
-        if(spikeHitCoolTimer > 0f )
+        if(playerDamageCoolTimer > 0f )
         {
-            spikeHitCoolTimer -= Time.deltaTime;
-            if(spikeHitCoolTimer < 0f )
+            playerDamageCoolTimer -= Time.deltaTime;
+            if(playerDamageCoolTimer < 0f )
             {
-                spikeHitCoolTimer = 0f;
+                playerDamageCoolTimer = 0f;
             }
         }
 
@@ -347,7 +336,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void moving()
     {
-        if (dashTimer > 0 || slideTimer > 0 || spikeHitCoolTimer > 0)
+        if (dashTimer > 0 || slideTimer > 0 || playerDamageCoolTimer > 0)
         { 
             return; 
         }
@@ -403,7 +392,7 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isGround", isGround);
         anim.SetBool("isDash", isDash);
         anim.SetBool("isSlide", isSlide);
-        anim.SetBool("isSpike", spikeHit);
+        anim.SetBool("isSpike", playerDamage);
     }
 
     private void initUI()
@@ -416,5 +405,24 @@ public class PlayerController : MonoBehaviour
         textSlideCoolTime.text = "";
         textSlideCoolTime.enabled = false;
     }
+
+    public void Hit()
+    {
+        playerHit();
+
+        curHp -= 3;
+        gameManager.SetHp(maxHp, curHp);
+
+
+        if (curHp <= 0)
+        {
+            Destroy(gameObject);
+            GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
+            Explosion goSc = go.GetComponent<Explosion>();
+
+            goSc.ImageSize(spriteRenderer.sprite.rect.width);
+        }
+    }
+
 
 }

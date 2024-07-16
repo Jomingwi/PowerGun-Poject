@@ -10,6 +10,7 @@ public class Difficult : MonoBehaviour
         normal,
         hard,
     }
-    eDifficultType difficultType;
+    [SerializeField] eDifficultType difficultType;
 
+    
 }

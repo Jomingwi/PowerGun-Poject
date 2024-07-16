@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 0
-  moveSpeed: 0
-  enemyHP: 0
+  moveSpeed: 10
+  enemyHP: 3
 --- !u!95 &4472370257898443170
 Animator:
   serializedVersion: 5
