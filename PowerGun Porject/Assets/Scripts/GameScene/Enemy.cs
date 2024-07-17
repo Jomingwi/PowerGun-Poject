@@ -21,10 +21,17 @@ public class Enemy : MonoBehaviour
     GameObject fabExplosion;
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
+    Rigidbody2D rigid;
+    float verticalVelocity;
+
+    Vector2 moveDir;
+
 
     private void Awake()
     {
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
+        rigid = GetComponent<Rigidbody2D>();
+
     }
 
     private void Start()

@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] Slider slider;
     [SerializeField] Image imgEnemyFillSlider;
     [SerializeField] TMP_Text enemyKillCountText;
-    [SerializeField] TMP_Text enemyMaxKillCountText;
 
 
 
@@ -76,10 +75,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         fabExplosion = Resources.Load<GameObject>("Effect/Explosion");
-        isSpawn = true;
-
         initSlider();
-        spawnCheck();
+        
     }
 
     private void Start()
@@ -92,18 +89,11 @@ public class GameManager : MonoBehaviour
     {
        
     }
-    private void spawnCheck()
-    {
-        if(isSpawn == true)
-        {
-            enemyCreate();
-        }
-    }
-
 
     public void enemyCreate()
     {
         if (isSpawn == false) { return; }
+
         if(enemySpawnCount < enemyMaxSpawnCount)
         {
             enemySpawnCount = enemyMaxSpawnCount;
@@ -126,8 +116,11 @@ public class GameManager : MonoBehaviour
                 defaultPos.y = player.transform.position.y;
                 defaultPos.x *= -player.transform.localScale.x;
             }
+        }
 
-           
+        if(enemySpawnCount == enemyMaxSpawnCount)
+        {
+            isSpawn = false;
         }
         
     }
@@ -149,16 +142,13 @@ public class GameManager : MonoBehaviour
     private void initSlider()
     {
         enemySpawnCount = enemyMaxSpawnCount;
-        slider.minValue = 0;
-        slider.maxValue = enemyMaxSpawnCount;
-        slider.value = 0;
         modifySlider();
     }
 
     public void modifySlider()
     {
-        slider.value = enemySpawnCount;
-        enemyKillCountText.text = $"{enemySpawnCount.ToString("d2")} / {enemyMaxSpawnCount.ToString("d2")}";
+        
+        
     }
 
     /// <summary>
@@ -176,16 +166,5 @@ public class GameManager : MonoBehaviour
             return true;
         }
     }
-    
-
-
-    public void PlayerPos(Vector2 pos)
-    {
-        if(player == null) { return; }
-    }
-
-    
-
-
 
 }

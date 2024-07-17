@@ -3,22 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
-{
-    
-
+{ 
     [Header("АјАн")]
     [SerializeField] GameObject fabBullet;
     [SerializeField] Transform dynamicObject;
     [SerializeField] Transform trsAttack;
-
-    
-
-
-
-    void Start()
-    {
-       
-    }
 
 
     void Update()
@@ -35,7 +24,9 @@ public class PlayerAttack : MonoBehaviour
     }
 
 
-    private void createAttack()
+
+
+    public void createAttack()
     {
         if (transform.localScale.x == 1f)
         {
@@ -51,6 +42,6 @@ public class PlayerAttack : MonoBehaviour
             Bullet goSc = go.GetComponent<Bullet>();
             goSc.Shoot();
         }
-
     }
+    
 }

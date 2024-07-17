@@ -9,10 +9,6 @@ public class Bullet : MonoBehaviour
     bool shoot;
 
 
-    PlayerController playerController;
-    
-    
-
     /// <summary>
     /// 카메라에서 사라지면 삭제
     /// </summary>
@@ -35,13 +31,6 @@ public class Bullet : MonoBehaviour
             PlayerController player = collision.GetComponent<PlayerController>();
             player.Hit();
         }
-    }
-
-
-
-    private void Start()
-    {
-        
     }
 
 
