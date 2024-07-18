@@ -1,17 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameHp : MonoBehaviour
 {
+    [Header("적 체력")]
     [SerializeField] Image imgEnemyHp;
     [SerializeField] Image imgEnemyEffect;
 
     [SerializeField] float effectTime;
     GameManager gameManager;
     Enemy enemy;
+
+    [Header("플레이어 체력")]
+    [SerializeField] Image imgPlayerHP;
+    [SerializeField] TMP_Text textPlayerHP;
+
 
 
     private void Awake()
@@ -29,12 +36,13 @@ public class GameHp : MonoBehaviour
     void initHp()
     {
         imgEnemyHp.fillAmount = 1;
+        imgPlayerHP.fillAmount = 1;
     }
 
    
     void Update()
     {
-        checkEnemyDestroy();
+        checkPlayerDestroy();
     }
 
     /// <summary>
@@ -50,14 +58,22 @@ public class GameHp : MonoBehaviour
     }
 
 
-    public void SetHp(float _maxhp , float _curHp)
+    public void SetPlayerHp(float _maxhp , float _curHp)
     {
-         imgEnemyHp.fillAmount = _curHp / _maxhp;
+        textPlayerHP.text = (_maxhp - _curHp).ToString( "F3") ;
+        imgPlayerHP.fillAmount = _curHp / _maxhp;
     }
 
-    private void checkEnemyDestroy()
+    public void SetEnemyHp(float _maxhp, float _curHp)
     {
-        if(imgEnemyHp.fillAmount == 0f)
+        imgEnemyHp.fillAmount = _curHp / _maxhp;
+
+    }
+
+
+    private void checkPlayerDestroy()
+    {
+        if(imgPlayerHP.fillAmount == 0f)
         {
             Destroy(gameObject);
         }

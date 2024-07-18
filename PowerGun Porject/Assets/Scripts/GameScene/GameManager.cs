@@ -28,8 +28,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameHp gameHP;
     [SerializeField] Slider slider;
     [SerializeField] Image imgEnemyFillSlider;
-    [SerializeField] TMP_Text enemyKillCountText;
 
+
+    [Header("플레이어 체력 게이지")]
+    [SerializeField] GameHp playerGameHp;
+    [SerializeField] Slider playerSlider;
+    [SerializeField] Image imgPlayerFillSlider;
+   
+
+    
 
 
     public GameObject FabExplosion
@@ -125,10 +132,17 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void SetHp(float _maxHp , float _curHp)
+    public void SetPlayerHp(float _maxHp , float _curHp)
     {
-        gameHP.SetHp(_maxHp, _curHp);
+        player.SetPlayerHp(_maxHp, _curHp);
     }
+
+    public void SetEnemyHp(float _maxHp , float _curHp)
+    {
+        enemy.SetEnemyHp(_maxHp, _curHp);
+    }
+
+   
 
 
     /// <summary>

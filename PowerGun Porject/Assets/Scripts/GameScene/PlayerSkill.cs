@@ -1,7 +1,6 @@
-using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,8 +32,15 @@ public class PlayerSkill : MonoBehaviour
     float skillTenCoolTimer;
     bool isTen;
 
+    bool isSetTenSkill = false;
+    float curLookAtPos;
+    int remainTenSkill;
+    float timerTenSkill;//타이머
+    float timeTenSkill = 0.1f;//발사간격
+
+
     [Header("샷건")]
-    [SerializeField] GameObject skillShotGun; 
+    [SerializeField] GameObject skillShotGun;
     [SerializeField] float skillShotGunCoolTime = 5;
     [SerializeField] Image shotGunImgFill;
     [SerializeField] TMP_Text textShotGunCoolTime;
@@ -61,7 +67,7 @@ public class PlayerSkill : MonoBehaviour
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-                enemy.Hit(4);
+                enemy.Hit(3);
             }
             if (isShotGun == true)
             {
@@ -88,25 +94,35 @@ public class PlayerSkill : MonoBehaviour
     {
         skillCoolTimeCheck();
         skillKeySetting();
+
+        //doSkill();
     }
 
+    private void doSkill()
+    {
+            Ten();
+    }
 
     public void skillKeySetting()
     {
 
-        if (Input.GetKey(KeyCode.X) && skillHeadShotCoolTimer == 0)
+        if (Input.GetKeyDown(KeyCode.X) && skillHeadShotCoolTimer == 0)
         {
             isHeadShot = true;
             playerSkill();
             headShot();
         }
-        if (Input.GetKey(KeyCode.C) && skillTenCoolTimer == 0)
+        if (Input.GetKeyDown(KeyCode.C) && skillTenCoolTimer == 0)
         {
             isTen = true;
-            playerSkill();
-            Ten();
+            skillTenCoolTimer = skillTenCoolTime;
+            remainTenSkill = 10;
+            StartCoroutine(corSkillTen());
+
+            //playerSkill();
+            //Ten();
         }
-        if (Input.GetKey(KeyCode.V) && skillShotGunCoolTimer == 0)
+        if (Input.GetKeyDown(KeyCode.V) && skillShotGunCoolTimer == 0)
         {
             isShotGun = true;
             playerSkill();
@@ -125,11 +141,11 @@ public class PlayerSkill : MonoBehaviour
             skillHeadShotCoolTimer = skillHeadShotCoolTime;
         }
 
-        if (isTen == true)
-        {
-            isTen = false;
-            skillTenCoolTimer = skillTenCoolTime;
-        }
+        //if (isTen == true)
+        //{
+        //    //isTen = false;
+        //    skillTenCoolTimer = skillTenCoolTime;
+        //}
 
         if (isShotGun == true)
         {
@@ -152,7 +168,7 @@ public class PlayerSkill : MonoBehaviour
             textHeadShotCoolTime.text = skillHeadShotCoolTimer.ToString("F1");
             textHeadShotCoolTime.enabled = true;
         }
-        if(skillHeadShotCoolTimer == 0)
+        if (skillHeadShotCoolTimer == 0)
         {
             textHeadShotCoolTime.enabled = false;
         }
@@ -163,6 +179,7 @@ public class PlayerSkill : MonoBehaviour
             if (skillTenCoolTimer < 0)
             {
                 skillTenCoolTimer = 0;
+                isTen = false;
             }
             tenImgFill.fillAmount = 1 - skillTenCoolTimer / skillTenCoolTime;
             textTenCoolTime.text = skillTenCoolTimer.ToString("F1");
@@ -189,6 +206,8 @@ public class PlayerSkill : MonoBehaviour
         {
             textShotGunCoolTime.enabled = false;
         }
+
+
 
     }
 
@@ -221,7 +240,54 @@ public class PlayerSkill : MonoBehaviour
 
     private void Ten()
     {
-        for(int i =0; i < 10; i++)
+        if (remainTenSkill <= 0) return;
+
+        //for(int i =0; i < 10; i++)
+        //{
+        //    if (transform.localScale.x == 1f)
+        //    {
+        //        Instantiate(skillTen, trsAttack.position, angle, dynamicObject);
+        //    }
+        //    else if (transform.localScale.x == -1f)
+        //    {
+        //        Instantiate(skillTen, trsAttack.position, Quaternion.identity, dynamicObject);
+        //    }
+        //}
+
+        if (isSetTenSkill == false)
+        {
+            curLookAtPos = transform.localScale.x;
+            timerTenSkill = 0.0f;
+
+            isSetTenSkill = true;
+        }
+
+        timerTenSkill += Time.deltaTime;
+        if (timerTenSkill >= timeTenSkill)
+        {
+            //if (curLookAtPos == 1f)
+            //{
+            //    Instantiate(skillTen, trsAttack.position, angle, dynamicObject);
+            //}
+            //else 
+            //{
+            //    Instantiate(skillTen, trsAttack.position, Quaternion.identity, dynamicObject);
+            //}
+            Instantiate(skillTen, trsAttack.position, curLookAtPos == 1f ? angle : Quaternion.identity, dynamicObject);
+            timerTenSkill = 0.0f;
+            remainTenSkill--;
+
+            if (remainTenSkill <= 0)
+            {
+                isTen = false;
+                isSetTenSkill = false;
+            }
+        }
+    }
+
+    IEnumerator corSkillTen()
+    {
+        for (int i = 0; i < 10; i++)
         {
             if (transform.localScale.x == 1f)
             {
@@ -231,6 +297,7 @@ public class PlayerSkill : MonoBehaviour
             {
                 Instantiate(skillTen, trsAttack.position, Quaternion.identity, dynamicObject);
             }
+            yield return new WaitForSeconds(timeTenSkill);
         }
     }
 

@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     [Header("플레이어 설정")]
     [SerializeField] float maxHp = 100;
     [SerializeField] float curHp;
+    [SerializeField] Image imgPlayerHp;
+    [SerializeField] TMP_Text hpText;
     bool isHit;
     bool playerDamage;
     
@@ -107,8 +109,8 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
         initUI();
-
         curHp = maxHp;
+        
     }
 
     void Start()
@@ -404,14 +406,25 @@ public class PlayerController : MonoBehaviour
         slideImageFill.fillAmount = 1;
         textSlideCoolTime.text = "";
         textSlideCoolTime.enabled = false;
+
+        imgPlayerHp.fillAmount = 1;
+        hpText.text = maxHp.ToString();
     }
+
+    public void SetPlayerHp(float _maxhp, float _curHp)
+    {
+        _curHp = curHp;
+        imgPlayerHp.fillAmount = _curHp;
+        hpText.text = _curHp.ToString();
+    }
+
+
 
     public void Hit()
     {
         playerHit();
-
         curHp -= 3;
-        gameManager.SetHp(maxHp, curHp);
+        gameManager.SetPlayerHp(maxHp, curHp);
 
 
         if (curHp <= 0)

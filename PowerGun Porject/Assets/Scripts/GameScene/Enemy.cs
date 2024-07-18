@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,17 +15,21 @@ public class Enemy : MonoBehaviour
         EnemyBoss,
     }
 
-    [SerializeField] protected eEnemyType enemyType;
 
-    [SerializeField] protected float moveSpeed;
-    [SerializeField] protected float enemyHP;
+    [Header("Àû ¼³Á¤")]
+    [SerializeField]  eEnemyType enemyType;
+    [SerializeField]  float moveSpeed;
+    [SerializeField] float enemyHP;
+    float enemyMaxHP;
+    [SerializeField]  Image imgEnemyHP;
+
     bool isDie;
     GameObject fabExplosion;
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
+
     Rigidbody2D rigid;
     float verticalVelocity;
-
     Vector2 moveDir;
 
 
@@ -31,13 +37,25 @@ public class Enemy : MonoBehaviour
     {
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
+        enemyHP = enemyMaxHP;
+        initUI();
+    }
 
+    private void initUI()
+    {
+        imgEnemyHP.fillAmount = 1;
     }
 
     private void Start()
     {
         gameManager = GameManager.Instance;
         fabExplosion = gameManager.FabExplosion;
+    }
+
+    public void SetEnemyHp(float maxHp , float curHp)
+    {
+        curHp = enemyHP;
+        imgEnemyHP.fillAmount = curHp;
     }
 
     public void Hit(float damage)
@@ -47,6 +65,7 @@ public class Enemy : MonoBehaviour
             return;
         }
         enemyHP -= damage;
+        
 
         if (enemyHP <= 0f)
         {
