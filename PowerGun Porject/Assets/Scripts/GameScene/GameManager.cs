@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -18,24 +19,14 @@ public class GameManager : MonoBehaviour
 
     [Header("적 생성")]
     [SerializeField] bool isSpawn;
+    [SerializeField] Slider slider;
     [SerializeField] Transform trsSpawnPos;
     [SerializeField] Transform trsDynamicObject;
     [SerializeField] float enemyMaxSpawnCount = 20;
     float enemySpawnCount = 0f;
 
-
-    [Header("적 체력 게이지")]
-    [SerializeField] GameHp gameHP;
-    [SerializeField] Slider slider;
-    [SerializeField] Image imgEnemyFillSlider;
-
-
-    [Header("플레이어 체력 게이지")]
-    [SerializeField] GameHp playerGameHp;
-    [SerializeField] Slider playerSlider;
-    [SerializeField] Image imgPlayerFillSlider;
-   
-
+    [Header("보스")]
+    [SerializeField] bool isSpawnBoss;
     
 
 
@@ -83,6 +74,7 @@ public class GameManager : MonoBehaviour
         }
         fabExplosion = Resources.Load<GameObject>("Effect/Explosion");
         initSlider();
+        isSpawn = true;
         
     }
 
@@ -114,15 +106,17 @@ public class GameManager : MonoBehaviour
             defaultPos.x = x;
             defaultPos.y = y;
 
+            if (defaultPos.y < player.transform.position.y || defaultPos.x < player.transform.position.x)
+            {
+                defaultPos.y = player.transform.position.y;
+                defaultPos.x = -player.transform.localScale.x;
+            }
+
             GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsDynamicObject);
             GameHp goSc = go.GetComponent<GameHp>();
             goSc.chaseEnemy();
 
-            if(defaultPos.y < player.transform.position.y && defaultPos.x < player.transform.position.x)
-            {
-                defaultPos.y = player.transform.position.y;
-                defaultPos.x *= -player.transform.localScale.x;
-            }
+           
         }
 
         if(enemySpawnCount == enemyMaxSpawnCount)
@@ -161,7 +155,11 @@ public class GameManager : MonoBehaviour
 
     public void modifySlider()
     {
-        
+        slider.value = enemySpawnCount;
+        if(enemySpawnCount == 0)
+        {
+            isSpawnBoss = true;
+        }
         
     }
 
@@ -177,6 +175,19 @@ public class GameManager : MonoBehaviour
         else
         {
             _pos = enemy.transform.position;
+            return true;
+        }
+    }
+    public bool GetPlayerPos(out Vector3 pos)
+    {
+        pos = default;
+        if (player == null)
+        {
+            return false;
+        }
+        else
+        {
+            pos = player.transform.position;
             return true;
         }
     }
