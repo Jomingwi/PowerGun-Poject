@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -14,19 +13,38 @@ public class GameManager : MonoBehaviour
     Camera mainCam;
 
     [Header("Àû±â")]
-    [SerializeField] List<GameObject> listEnemy;
+    [SerializeField] public List<GameObject> listEnemy;
 
 
     [Header("Àû »ı¼º")]
     [SerializeField] bool isSpawn;
-    [SerializeField] Slider slider;
     [SerializeField] Transform trsSpawnPos;
     [SerializeField] Transform trsDynamicObject;
+    [SerializeField] TMP_Text text;
     [SerializeField] float enemyMaxSpawnCount = 20;
     float enemySpawnCount = 0f;
 
+<<<<<<< HEAD
+    [Header("Àû Ã¼·Â °ÔÀÌÁö")]
+    [SerializeField] EnemyHP enemyHP;
+
     [Header("º¸½º")]
     [SerializeField] bool isSpawnBoss;
+=======
+
+    [Header("Àû Ã¼·Â °ÔÀÌÁö")]
+    [SerializeField] GameHp gameHP;
+    [SerializeField] Slider slider;
+    [SerializeField] Image imgEnemyFillSlider;
+
+
+    [Header("ÇÃ·¹ÀÌ¾î Ã¼·Â °ÔÀÌÁö")]
+    [SerializeField] GameHp playerGameHp;
+    [SerializeField] Slider playerSlider;
+    [SerializeField] Image imgPlayerFillSlider;
+   
+>>>>>>> parent of e705cee (ë™ê¸°í™”)
+
     
 
 
@@ -74,13 +92,13 @@ public class GameManager : MonoBehaviour
         }
         fabExplosion = Resources.Load<GameObject>("Effect/Explosion");
         initSlider();
-        isSpawn = true;
         
     }
 
     private void Start()
     {
         mainCam = Camera.main;
+        
         enemyCreate();
     }
 
@@ -95,7 +113,6 @@ public class GameManager : MonoBehaviour
 
         if(enemySpawnCount < enemyMaxSpawnCount)
         {
-            enemySpawnCount = enemyMaxSpawnCount;
 
             int count = listEnemy.Count;
             int iRand = Random.Range(0, count);
@@ -106,20 +123,19 @@ public class GameManager : MonoBehaviour
             defaultPos.x = x;
             defaultPos.y = y;
 
-            if (defaultPos.y < player.transform.position.y || defaultPos.x < player.transform.position.x)
+            GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsDynamicObject);
+            EnemyHP goSc = go.GetComponent<EnemyHP>();
+            goSc.EnemyHpBar();
+            enemySpawnCount++;
+
+            if(defaultPos.y < player.transform.position.y && defaultPos.x < player.transform.position.x)
             {
                 defaultPos.y = player.transform.position.y;
-                defaultPos.x = -player.transform.localScale.x;
+                defaultPos.x *= -player.transform.localScale.x;
             }
-
-            GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsDynamicObject);
-            GameHp goSc = go.GetComponent<GameHp>();
-            goSc.chaseEnemy();
-
-           
         }
 
-        if(enemySpawnCount == enemyMaxSpawnCount)
+        if(enemySpawnCount >= enemyMaxSpawnCount)
         {
             isSpawn = false;
         }
@@ -131,9 +147,9 @@ public class GameManager : MonoBehaviour
         player.SetPlayerHp(_maxHp, _curHp);
     }
 
-    public void SetEnemyHp(float _maxHp , float _curHp)
+    public void SetEnemyHp(float maxHp , float curHp)
     {
-        enemy.SetEnemyHp(_maxHp, _curHp);
+        enemyHP.SetEnemyHp(maxHp, curHp);
     }
 
    
@@ -145,39 +161,30 @@ public class GameManager : MonoBehaviour
     public void enemyKillCount()
     {
         enemySpawnCount--;
+        modifySlider();
     }
 
     private void initSlider()
     {
-        enemySpawnCount = enemyMaxSpawnCount;
+        enemySpawnCount = enemyMaxSpawnCount; 
+        slider.maxValue = enemyMaxSpawnCount;
+        text.text = $"{(int)enemySpawnCount} / {(int)enemyMaxSpawnCount}";
         modifySlider();
     }
 
     public void modifySlider()
     {
-        slider.value = enemySpawnCount;
-        if(enemySpawnCount == 0)
-        {
-            isSpawnBoss = true;
-        }
+        
         
     }
 
     /// <summary>
-    /// Æ÷Áö¼ÇÀº ±âº»°ªÀ¸·Î Àâ°í ÀûÀÌ ¾øÀ¸¸é false·Î ¸®ÅÏÇÏ°í ÀûÀÌ »ı¼ºµÇ¾î ÀÖÀ¸¸é Æ÷Áö¼Ç¿¡ ¿¡³Ê¹Ì Æ÷Áö¼ÇÀ» ³Ö¾îÁØ´ÙÀ½ true¸¦ ¸®ÅÏ
+    /// Æ÷Áö¼ÇÀº ±âº»°ªÀ¸·Î Àâ°í ÇÃ·¹ÀÌ¾î°¡ nullÀÌ ¾Æ´Ï¶ó¸é false¸¦ ¸®ÅÏ ÀÖ´Ù¸é true¸¦ ¸®ÅÏ
     /// </summary>
     /// <param name="_pos"></param>
     /// <returns></returns>
-    public bool EnemyPos(out Vector2 _pos)
-    {
-        _pos = default;
-        if(enemy == null) { return false; }
-        else
-        {
-            _pos = enemy.transform.position;
-            return true;
-        }
-    }
+<<<<<<< HEAD
+   
     public bool GetPlayerPos(out Vector3 pos)
     {
         pos = default;
@@ -188,6 +195,15 @@ public class GameManager : MonoBehaviour
         else
         {
             pos = player.transform.position;
+=======
+    public bool EnemyPos(out Vector2 _pos)
+    {
+        _pos = default;
+        if(enemy == null) { return false; }
+        else
+        {
+            _pos = enemy.transform.position;
+>>>>>>> parent of e705cee (ë™ê¸°í™”)
             return true;
         }
     }
