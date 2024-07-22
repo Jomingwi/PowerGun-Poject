@@ -4,7 +4,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using static System.Net.Mime.MediaTypeNames;
+using UnityEngine.Experimental.Playables;
+using System.Runtime.InteropServices;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,19 +17,22 @@ public class GameManager : MonoBehaviour
 
     [Header("利扁")]
     [SerializeField] List<GameObject> listEnemy;
-
+    [SerializeField] BoxCollider2D boxcoll;
 
     [Header("利 积己")]
+    [SerializeField] EnemyHp enemyhp;
     [SerializeField] bool isSpawn;
     [SerializeField] Slider slider;
+    [SerializeField] TMP_Text sliderText;
     [SerializeField] Transform trsSpawnPos;
     [SerializeField] Transform trsDynamicObject;
     [SerializeField] float enemyMaxSpawnCount = 20;
-    float enemySpawnCount = 0f;
+    float enemySpawnCount;
+
 
     [Header("焊胶")]
     [SerializeField] bool isSpawnBoss;
-    
+
 
 
     public GameObject FabExplosion
@@ -59,14 +64,14 @@ public class GameManager : MonoBehaviour
     public MapBound Map
     {
         get { return map; }
-        set {  map = value; }
+        set { map = value; }
     }
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
-            Instance = this; 
+            Instance = this;
         }
         else
         {
@@ -75,68 +80,74 @@ public class GameManager : MonoBehaviour
         fabExplosion = Resources.Load<GameObject>("Effect/Explosion");
         initSlider();
         isSpawn = true;
-        
+
     }
 
     private void Start()
     {
         mainCam = Camera.main;
         enemyCreate();
+
     }
 
     private void Update()
     {
-       
+
     }
+
+
 
     public void enemyCreate()
     {
+
         if (isSpawn == false) { return; }
-
-        if(enemySpawnCount < enemyMaxSpawnCount)
-        {
-            enemySpawnCount = enemyMaxSpawnCount;
-
-            int count = listEnemy.Count;
-            int iRand = Random.Range(0, count);
-
-            Vector2 defaultPos = trsSpawnPos.position;
-            float x = Random.Range(map.curBound.min.x, map.curBound.max.x);
-            float y = Random.Range(map.curBound.min.y, map.curBound.max.y);
-            defaultPos.x = x;
-            defaultPos.y = y;
-
-            if (defaultPos.y < player.transform.position.y || defaultPos.x < player.transform.position.x)
+        for (int i = 0; i < enemyMaxSpawnCount; i++)
+        { 
+            if (enemySpawnCount <= enemyMaxSpawnCount)
             {
-                defaultPos.y = player.transform.position.y;
-                defaultPos.x = -player.transform.localScale.x;
+                int count = listEnemy.Count;
+                int iRand = Random.Range(0, count);
+
+                Vector2 defaultPos = trsSpawnPos.position;
+                float x = Random.Range(boxcoll.bounds.min.x, boxcoll.bounds.max.x);
+                float y = Random.Range(boxcoll.bounds.min.y, boxcoll.bounds.max.y);
+                defaultPos.x = x;
+                defaultPos.y = y;
+
+                GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsSpawnPos);
+                EnemyHp goSc = go.GetComponent<EnemyHp>();
+                enemySpawnCount++;
+
             }
-
-            GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsDynamicObject);
-            GameHp goSc = go.GetComponent<GameHp>();
-            goSc.chaseEnemy();
-
-           
         }
 
-        if(enemySpawnCount == enemyMaxSpawnCount)
+        if (enemySpawnCount == enemyMaxSpawnCount)
         {
             isSpawn = false;
         }
-        
+
     }
 
-    public void SetPlayerHp(float _maxHp , float _curHp)
+    public void EnemyHpBar()
+    {
+        int count = listEnemy.Count;
+        for(int i =0; i < count; i++)
+        {
+            Instantiate(listEnemy[i], enemy.transform.position, Quaternion.identity, transform.parent);
+        }
+    }
+
+    public void SetPlayerHp(float _maxHp, float _curHp)
     {
         player.SetPlayerHp(_maxHp, _curHp);
     }
 
-    public void SetEnemyHp(float _maxHp , float _curHp)
+    public void SetEnemyHp(float _maxHp, float _curHp)
     {
-        enemy.SetEnemyHp(_maxHp, _curHp);
+        enemyhp.SetEnemyHp(_maxHp, _curHp);
     }
 
-   
+
 
 
     /// <summary>
@@ -149,18 +160,19 @@ public class GameManager : MonoBehaviour
 
     private void initSlider()
     {
-        enemySpawnCount = enemyMaxSpawnCount;
+        slider.maxValue = enemyMaxSpawnCount;
+        sliderText.text = $"{(int)enemySpawnCount} / {(int)enemyMaxSpawnCount}";
         modifySlider();
     }
 
     public void modifySlider()
     {
         slider.value = enemySpawnCount;
-        if(enemySpawnCount == 0)
+        if (enemySpawnCount == 0)
         {
             isSpawnBoss = true;
         }
-        
+
     }
 
     /// <summary>
@@ -171,7 +183,7 @@ public class GameManager : MonoBehaviour
     public bool EnemyPos(out Vector2 _pos)
     {
         _pos = default;
-        if(enemy == null) { return false; }
+        if (enemy == null) { return false; }
         else
         {
             _pos = enemy.transform.position;

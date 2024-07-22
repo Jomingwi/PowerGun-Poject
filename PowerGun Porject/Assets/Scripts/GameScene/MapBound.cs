@@ -6,19 +6,16 @@ using UnityEngine.UIElements;
 public class MapBound : MonoBehaviour
 {
     Camera mainCam;
-    [SerializeField] BoxCollider2D coll;
+    [SerializeField] public BoxCollider2D coll;
     public Bounds curBound;
     [SerializeField] Transform trsPlayer;
     [SerializeField] Transform trsBackGround;
 
-
     void Start()
     {
         mainCam = Camera.main;
-        checkBound(); 
+        checkBound();
     }
-    
-
     
     void Update()
     {
@@ -32,8 +29,6 @@ public class MapBound : MonoBehaviour
 
         trsBackGround.transform.position = new Vector3(
             mainCam.transform.position.x, trsBackGround.position.y, 0);
-
-
     }
 
     public void checkBound()

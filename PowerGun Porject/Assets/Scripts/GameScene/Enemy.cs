@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] float enemyHP;
     [SerializeField] float enemyMaxHP;
     [SerializeField] Image imgEnemyHP;
+    [SerializeField] float moveTimer = 0;
+    float moveTime = 3;
     bool isMoving;
     bool isSway;
   
@@ -34,7 +37,7 @@ public class Enemy : MonoBehaviour
 
     Rigidbody2D rigid;
     BoxCollider2D boxcoll;
-    Vector3 moveDir = new Vector2(0.5f,0);
+    Vector3 moveDir = new Vector2(1,0);
     Camera mainCam;
 
 
@@ -47,6 +50,7 @@ public class Enemy : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxcoll = GetComponentInChildren<BoxCollider2D>();
         enemyHP = enemyMaxHP;
+        moveTimer = moveTime;
         initUI();
     }
 
@@ -67,17 +71,12 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         enemyMoving();
-
     }
 
     public void SetEnemyHp(float maxHp, float curHp)
     {
         curHp = enemyHP;
         imgEnemyHP.fillAmount = curHp;
-        if (imgEnemyHP.fillAmount <= 0)
-        {
-            Destroy(gameObject);
-        }
     }
 
 
@@ -105,31 +104,48 @@ public class Enemy : MonoBehaviour
 
     private void enemyMoving()
     {
-        if (isMoving == true)
+        moveTimer -= Time.deltaTime;
+        if (moveTimer < 0f)
         {
-            transform.position += Vector3.right * Time.deltaTime * moveSpeed;
-            
-            if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == false)
-            {
-                Vector3 scale = transform.localScale;
-                scale.x *= -1;
-                transform.localScale = scale;
-            }
-            rigid.velocity = new Vector2(moveDir.x , rigid.velocity.y);
+            movingCheck();
+            moveTimer = moveTime;
         }
-        else
+        if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == false)
         {
-            transform.position += Vector3.left * Time.deltaTime * moveSpeed;
+            movingCheck();
         }
+       
     }
 
     private void movingCheck()
     {
-        if(map == null)
-        {
-            map = gameManager.Map;
-        }
+        Vector2 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+
+        moveDir.x *= -1;
     }
+
+    private void playerCheckPos()
+    {
+        Vector3 pos;
+        if(gameManager.GetPlayerPos(out pos) == true)
+        {
+            Vector2 distance = pos - transform.position;
+            mainCam.ViewportToWorldPoint(distance);
+            transform.position = pos;
+            
+        }
+        else
+        {
+            enemyMoving();
+        }
+        rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
+    }
+    
+}
+
+   
 
 
 
@@ -141,4 +157,4 @@ public class Enemy : MonoBehaviour
 
 
 
-}
+
