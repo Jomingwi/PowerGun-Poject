@@ -436,6 +436,7 @@ public class PlayerController : MonoBehaviour
             goSc.ImageSize(spriteRenderer.sprite.rect.width);
         }
     }
+   
 
 
 }

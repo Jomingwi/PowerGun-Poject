@@ -1,5 +1,3 @@
-using UnityEngine.UI;
-
 public enum GameTags
 {
     Player,
@@ -17,8 +15,6 @@ public class Tool
     }
    
 }
-
-
 
 
 
