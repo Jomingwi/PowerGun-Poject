@@ -20,8 +20,8 @@ public class Enemy : MonoBehaviour
     [Header("Àû ¼³Á¤")]
     [SerializeField] eEnemyType enemyType;
     [SerializeField] float moveSpeed;
-    [SerializeField] float enemyHP;
-    [SerializeField] float enemyMaxHP;
+    [SerializeField] public float enemyHP;
+    [SerializeField] public float enemyMaxHP;
     [SerializeField] Image imgEnemyHP;
     [SerializeField] float moveTimer = 0;
     float moveTime = 3;
@@ -34,6 +34,7 @@ public class Enemy : MonoBehaviour
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
     MapBound map;
+    EnemyHp _enemyHp;
 
     Rigidbody2D rigid;
     BoxCollider2D boxcoll;
@@ -73,10 +74,9 @@ public class Enemy : MonoBehaviour
         enemyMoving();
     }
 
-    public void SetEnemyHp(float maxHp, float curHp)
+    public void setHpBar(EnemyHp eHP)
     {
-        curHp = enemyHP;
-        imgEnemyHP.fillAmount = curHp;
+        _enemyHp = eHP;
     }
 
 
@@ -114,7 +114,7 @@ public class Enemy : MonoBehaviour
         {
             movingCheck();
         }
-       
+        rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
     }
 
     private void movingCheck()
@@ -140,7 +140,7 @@ public class Enemy : MonoBehaviour
         {
             enemyMoving();
         }
-        rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
+        
     }
     
 }

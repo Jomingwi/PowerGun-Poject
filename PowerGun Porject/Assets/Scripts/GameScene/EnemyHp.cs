@@ -16,7 +16,6 @@ public class EnemyHp : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.Instance;
-
     }
 
     private void Update()
