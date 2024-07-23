@@ -15,7 +15,5 @@ public class Explosion : MonoBehaviour {
         scale *= imgSize / 125;
         transform.localScale = scale;
     }
-
-    
     
 }

@@ -105,7 +105,6 @@ MonoBehaviour:
   moveSpeed: 5
   enemyHP: 6
   enemyMaxHP: 6
-  imgEnemyHP: {fileID: 0}
   moveTimer: 0
 --- !u!95 &8803069818085300133
 Animator:
@@ -254,7 +253,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.5436715, y: -0.45047045}
+  m_Offset: {x: 0.6522057, y: -0.45047045}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -265,5 +264,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3165276, y: 0.8135977}
+  m_Size: {x: 0.09945911, y: 0.8135977}
   m_EdgeRadius: 0

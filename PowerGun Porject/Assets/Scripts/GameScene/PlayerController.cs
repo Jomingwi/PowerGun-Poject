@@ -83,6 +83,12 @@ public class PlayerController : MonoBehaviour
                 Hit();
             }
         }
+
+        if (isGround == false && boxColl.IsTouchingLayers(LayerMask.GetMask("Enemy"))== true)
+        {
+            isHit = true;
+            Hit();
+        }
        
     }
 
@@ -98,6 +104,11 @@ public class PlayerController : MonoBehaviour
             {
                 isHit = false;
             }
+        }
+
+        if (isGround == false && boxColl.IsTouchingLayers(LayerMask.GetMask("Enemy")) == true)
+        {
+            isHit = false;
         }
     }
 
@@ -157,6 +168,7 @@ public class PlayerController : MonoBehaviour
         {
             playerDamage = false;
         }
+        
     }
 
 
@@ -377,13 +389,14 @@ public class PlayerController : MonoBehaviour
         if (verticalVelocity > 0f) return;
 
         RaycastHit2D hit = 
-            Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
+            Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground","Enemy"));
         //박스 센터를 기준으로 박스 사이즈를 체크하고 밑에서 그라운드와 닿는지 체크
 
         if(hit) 
         {
             isGround = true; //닿으면 true로 변경
         }
+        
     }
 
    
@@ -414,7 +427,7 @@ public class PlayerController : MonoBehaviour
     public void SetPlayerHp(float _maxhp, float _curHp)
     {
         _curHp = curHp;
-        imgPlayerHp.fillAmount = _curHp;
+        imgPlayerHp.fillAmount = _curHp/_maxhp;
         hpText.text = _curHp.ToString();
     }
 
@@ -424,7 +437,7 @@ public class PlayerController : MonoBehaviour
     {
         playerHit();
         curHp -= 3;
-        gameManager.SetPlayerHp(maxHp, curHp);
+        SetPlayerHp(maxHp, curHp);
 
 
         if (curHp <= 0)
@@ -436,7 +449,5 @@ public class PlayerController : MonoBehaviour
             goSc.ImageSize(spriteRenderer.sprite.rect.width);
         }
     }
-   
-
 
 }

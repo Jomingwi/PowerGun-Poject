@@ -35,7 +35,7 @@ Transform:
   m_Children:
   - {fileID: 4852802944101161013}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &413319194290096960
 SpriteRenderer:
@@ -103,9 +103,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 1
   moveSpeed: 3
-  enemyHP: 15
+  enemyCurHp: 0
   enemyMaxHP: 15
-  imgEnemyHP: {fileID: 0}
   moveTimer: 0
 --- !u!95 &8919174109589101673
 Animator:
@@ -187,7 +186,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.06961393, y: -0.2038706}
+  m_Offset: {x: 0.06961393, y: -0.168675}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -198,7 +197,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.7425356, y: 0.79225886}
+  m_Size: {x: 0.7425356, y: 0.86265004}
   m_EdgeRadius: 0
 --- !u!1 &9203668402909850753
 GameObject:
@@ -264,7 +263,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.6242039, y: -0.36560535}
+  m_Offset: {x: 0.78927636, y: -0.49952793}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -275,5 +274,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.42929888, y: 0.91082764}
+  m_Size: {x: 0.099153996, y: 0.6973953}
   m_EdgeRadius: 0
