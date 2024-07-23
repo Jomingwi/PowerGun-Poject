@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     float doubleJumpCoolTimer = 0.0f;
     bool isJump;
     bool doubleJump;
-    float playerDamageCoolTime = 0.3f;
+    float playerDamageCoolTime = 0.1f;
     float playerDamageCoolTimer = 0.0f;
  
 
