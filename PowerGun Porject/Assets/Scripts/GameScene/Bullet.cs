@@ -25,12 +25,6 @@ public class Bullet : MonoBehaviour
             Enemy enemy = collision.GetComponent<Enemy>();
             enemy.Hit(3);
         }
-        if(shoot == true && collision.tag == "Player")
-        {
-            Destroy(gameObject);
-            PlayerController player = collision.GetComponent<PlayerController>();
-            player.Hit();
-        }
     }
 
 

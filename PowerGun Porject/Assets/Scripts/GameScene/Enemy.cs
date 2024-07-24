@@ -21,7 +21,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] float moveSpeed;
     [SerializeField] public float enemyCurHp;
     [SerializeField] public float enemyMaxHP;
-    float beforeHP;
     [SerializeField] float moveTimer = 0;
     float moveTime = 3;
 
@@ -67,8 +66,8 @@ public class Enemy : MonoBehaviour
         if(gameManager == null) { return; }
 
         GameObject go = Instantiate(gameManager.FabEnemyHp, gameManager.trsCanvas.transform.position, Quaternion.identity, gameManager.trsHpBarPos); ;
-        EnemyHp goSc = go.GetComponent<EnemyHp>();
-        goSc.SetEnemy(this);
+		    enemyHP = go.GetComponent<EnemyHp>();
+		    enemyHP.SetEnemy(this);
     }
     
 
@@ -80,7 +79,7 @@ public class Enemy : MonoBehaviour
         }
        
         enemyCurHp -= damage;
-        gameManager.SetEnemyHp(enemyMaxHP ,enemyCurHp);
+		    enemyHP.SetEnemyHp(enemyMaxHP,enemyCurHp);
 
         if (enemyCurHp == 0f)
         {
@@ -125,23 +124,6 @@ public class Enemy : MonoBehaviour
         transform.localScale = scale;
 
         moveDir.x *= -1;
-    }
-
-    private void playerCheckPos()
-    {
-        Vector3 pos;
-        if (gameManager.GetPlayerPos(out pos) == true)
-        {
-            Vector2 distance = pos - transform.position;
-            mainCam.ViewportToWorldPoint(distance);
-            transform.position = pos;
-
-        }
-        else
-        {
-            enemyMoving();
-        }
-
     }
 
 }
