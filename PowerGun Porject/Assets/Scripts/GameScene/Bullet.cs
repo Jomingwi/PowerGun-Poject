@@ -23,8 +23,12 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
             Enemy enemy = collision.GetComponent<Enemy>();
-            EnemyBoss boss = collision.GetComponent<EnemyBoss>();
             enemy.Hit(3);
+        }
+        if(shoot == false && collision.tag == "EnemyBoss")
+        {
+            Destroy(gameObject) ;
+            EnemyBoss boss = collision.GetComponent<EnemyBoss>();
             boss.bossHit(3);
         }
     }

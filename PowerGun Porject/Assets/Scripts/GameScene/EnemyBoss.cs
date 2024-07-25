@@ -46,6 +46,7 @@ public class EnemyBoss : MonoBehaviour
 	{
 		rigid = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
+		boxcoll = GetComponent<BoxCollider2D>();
 		spriteRenderer = transform.GetComponent<SpriteRenderer>();
 		bossCurHp = bossMaxHp;
 	}
@@ -61,6 +62,7 @@ public class EnemyBoss : MonoBehaviour
 
 	void Update()
 	{
+		if(gameObject!= null) { return; }
 		bossGravityCheck();
 		bossGroundCheck();
 		
@@ -70,8 +72,12 @@ public class EnemyBoss : MonoBehaviour
 	}
 
 	private void bossGroundCheck()
-	{ 
-		RaycastHit2D hit = Physics2D.BoxCast(boxcoll.bounds.center, boxcoll.bounds.size, 0, Vector2.down, groundCheckLength, LayerMask.GetMask("Ground"));
+	{
+		isGround = false;
+		if(verticalVelocity > 0 ) { return; }
+
+		RaycastHit2D hit = 
+			Physics2D.BoxCast(boxcoll.bounds.center, boxcoll.bounds.size, 0, Vector2.down, groundCheckLength, LayerMask.GetMask("Ground"));
 
 		if(hit)
 		{
@@ -131,6 +137,7 @@ public class EnemyBoss : MonoBehaviour
 
 	public void bossHit(float damage)
 	{
+		
 		if (bossCurHp < 0)
 		{
 			bossCurHp = 0;
@@ -154,7 +161,7 @@ public class EnemyBoss : MonoBehaviour
 
 	private void doAnim()
 	{
-		anim.SetBool("boosMoving", isbossMoving);
+		anim.SetBool("bossMoving", isbossMoving);
 		anim.SetBool("bossDash", isbossDash);
 	}
 

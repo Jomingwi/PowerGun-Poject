@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
 
 	[Header("보스")]
 	[SerializeField] bool isSpawnBoss = false;
+	[SerializeField] GameObject EnemyBoss;
 
 	[Header("보스 UI")]
 	[SerializeField] Slider bossSlider;
@@ -58,18 +59,6 @@ public class GameManager : MonoBehaviour
 		get { return player; }
 		set { player = value; }
 	}
-
-	Enemy enemy;
-
-	public Enemy Enemy
-	{
-		get { return enemy; }
-		set { enemy = value; }
-	}
-
-	EnemyBoss enemyBoss;
-	public EnemyBoss EnemyBoss => enemyBoss;
-
 
 
 	private void Awake()
@@ -183,7 +172,7 @@ public class GameManager : MonoBehaviour
 		
 		if (isSpawnBoss == true)
 		{
-			GameObject go =  Instantiate(EnemyBoss.gameObject, enemyBoss.transform.position, Quaternion.identity, transform.parent);
+			GameObject go =  Instantiate(EnemyBoss, transform.position, Quaternion.identity, transform.parent);
 			EnemyBoss goSc = go.GetComponent<EnemyBoss>();
 			bossinitSlider(goSc.bossMaxHp);
 		}

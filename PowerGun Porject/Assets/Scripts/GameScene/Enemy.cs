@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     bool isGround;
     float verticalVelocity;
 
-    
+
     GameObject fabExplosion;
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
@@ -37,9 +37,9 @@ public class Enemy : MonoBehaviour
     BoxCollider2D boxcoll;
     Vector3 moveDir = new Vector2(1, 0);
     Camera mainCam;
-    
 
-		private void Awake()
+
+    private void Awake()
     {
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
@@ -63,33 +63,33 @@ public class Enemy : MonoBehaviour
     {
         enemyGravityCheck();
 
-				enemyMoving();
+        enemyMoving();
     }
 
     public void setHpBar()
     {
-        if(gameManager == null) { return; }
+        if (gameManager == null) { return; }
 
         GameObject go = Instantiate(gameManager.FabEnemyHp, gameManager.trsCanvas.transform.position, Quaternion.identity, gameManager.trsHpBarPos); ;
-		    enemyHP = go.GetComponent<EnemyHp>();
-		    enemyHP.SetEnemy(this);
+        enemyHP = go.GetComponent<EnemyHp>();
+        enemyHP.SetEnemy(this);
     }
-    
+
 
     public void Hit(float damage)
     {
-        if(enemyCurHp < 0)
+        if (enemyCurHp < 0)
         {
             enemyCurHp = 0;
         }
 
-		    enemyCurHp -= damage;
-		    enemyHP.SetEnemyHp(enemyMaxHP,enemyCurHp);
+        enemyCurHp -= damage;
+        enemyHP.SetEnemyHp(enemyMaxHP, enemyCurHp);
 
         if (enemyCurHp == 0f)
         {
             Destroy(gameObject);
-            
+
 
             GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
             Explosion goSc = go.GetComponent<Explosion>();
@@ -99,31 +99,31 @@ public class Enemy : MonoBehaviour
         }
 
     }
-  
- 
 
 
-	private void enemyGravityCheck()
-	{
-    if (isGround == false)
-		{
-			verticalVelocity += Physics.gravity.y * Time.deltaTime;
-			if (verticalVelocity < -10)
-			{
-				verticalVelocity = -10;
-			}
-		}
-		else if (isGround == true)
-		{
-			verticalVelocity = 0;
-		}
-	}
 
 
-	/// <summary>
-	/// 에너미가 움직이는 코드
-	/// </summary>
-	private void enemyMoving()
+    private void enemyGravityCheck()
+    {
+        if (isGround == false)
+        {
+            verticalVelocity += Physics.gravity.y * Time.deltaTime;
+            if (verticalVelocity < -10)
+            {
+                verticalVelocity = -10;
+            }
+        }
+        else if (isGround == true)
+        {
+            verticalVelocity = 0;
+        }
+    }
+
+
+    /// <summary>
+    /// 에너미가 움직이는 코드
+    /// </summary>
+    private void enemyMoving()
     {
         moveTimer -= Time.deltaTime;
         if (moveTimer < 0f)
@@ -135,9 +135,9 @@ public class Enemy : MonoBehaviour
         {
             movingCheck();
         }
-        else if(boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == true)
+        else if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == true)
         {
-          isGround = true;
+            isGround = true;
         }
         rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
     }

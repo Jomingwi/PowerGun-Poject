@@ -59,27 +59,42 @@ public class PlayerSkill : MonoBehaviour
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-                EnemyBoss boss = collision.GetComponent<EnemyBoss>();
                 enemy.Hit(15);
-                boss.bossHit(15);
             }
             if (isTen == true)
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-				        EnemyBoss boss = collision.GetComponent<EnemyBoss>();
-				        enemy.Hit(3);
-                boss.bossHit(3);
+                enemy.Hit(3);
             }
             if (isShotGun == true)
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-				        EnemyBoss boss = collision.GetComponent<EnemyBoss>();
-				        enemy.Hit(3);
-                boss.bossHit(3);
+				enemy.Hit(3);
             }
 
+        }
+        else if(skillshot == false && collision.tag == "EnemyBoss" )
+        {
+            if(isHeadShot == true)
+            {
+                Destroy(gameObject);
+                EnemyBoss boss = collision.GetComponent<EnemyBoss>();
+                boss.bossHit(15);
+            }
+            if (isTen == true)
+            {
+                Destroy(gameObject);
+                EnemyBoss boss = collision.GetComponent<EnemyBoss>();
+                boss.bossHit(3);
+            }
+            if (isShotGun == true)
+            {
+                Destroy(gameObject);
+                EnemyBoss boss = collision.GetComponent<EnemyBoss>();
+                boss.bossHit(3);
+            }
         }
     }
     private void Awake()
@@ -92,15 +107,8 @@ public class PlayerSkill : MonoBehaviour
     {
         skillCoolTimeCheck();
         skillKeySetting();
-
-        //doSkill();
     }
-
-    private void doSkill()
-    {
-            Ten();
-    }
-
+    
     public void skillKeySetting()
     {
 
@@ -116,9 +124,6 @@ public class PlayerSkill : MonoBehaviour
             skillTenCoolTimer = skillTenCoolTime;
             remainTenSkill = 10;
             StartCoroutine(corSkillTen());
-
-            //playerSkill();
-            //Ten();
         }
         if (Input.GetKeyDown(KeyCode.V) && skillShotGunCoolTimer == 0)
         {
@@ -138,13 +143,6 @@ public class PlayerSkill : MonoBehaviour
             isHeadShot = false;
             skillHeadShotCoolTimer = skillHeadShotCoolTime;
         }
-
-        //if (isTen == true)
-        //{
-        //    //isTen = false;
-        //    skillTenCoolTimer = skillTenCoolTime;
-        //}
-
         if (isShotGun == true)
         {
             isShotGun = false;
@@ -233,53 +231,6 @@ public class PlayerSkill : MonoBehaviour
         else if (transform.localScale.x == -1f)
         {
             Instantiate(skillHeadShot, trsAttack.position, Quaternion.identity, dynamicObject);
-        }
-    }
-
-    private void Ten()
-    {
-        if (remainTenSkill <= 0) return;
-
-        //for(int i =0; i < 10; i++)
-        //{
-        //    if (transform.localScale.x == 1f)
-        //    {
-        //        Instantiate(skillTen, trsAttack.position, angle, dynamicObject);
-        //    }
-        //    else if (transform.localScale.x == -1f)
-        //    {
-        //        Instantiate(skillTen, trsAttack.position, Quaternion.identity, dynamicObject);
-        //    }
-        //}
-
-        if (isSetTenSkill == false)
-        {
-            curLookAtPos = transform.localScale.x;
-            timerTenSkill = 0.0f;
-
-            isSetTenSkill = true;
-        }
-
-        timerTenSkill += Time.deltaTime;
-        if (timerTenSkill >= timeTenSkill)
-        {
-            //if (curLookAtPos == 1f)
-            //{
-            //    Instantiate(skillTen, trsAttack.position, angle, dynamicObject);
-            //}
-            //else 
-            //{
-            //    Instantiate(skillTen, trsAttack.position, Quaternion.identity, dynamicObject);
-            //}
-            Instantiate(skillTen, trsAttack.position, curLookAtPos == 1f ? angle : Quaternion.identity, dynamicObject);
-            timerTenSkill = 0.0f;
-            remainTenSkill--;
-
-            if (remainTenSkill <= 0)
-            {
-                isTen = false;
-                isSetTenSkill = false;
-            }
         }
     }
 
