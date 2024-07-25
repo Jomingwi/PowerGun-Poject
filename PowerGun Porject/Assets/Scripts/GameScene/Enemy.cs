@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float enemyMaxHP;
     [SerializeField] float moveTimer = 0;
     float moveTime = 3;
+    bool isGround;
+    float verticalVelocity;
 
     
     GameObject fabExplosion;
@@ -34,9 +37,9 @@ public class Enemy : MonoBehaviour
     BoxCollider2D boxcoll;
     Vector3 moveDir = new Vector2(1, 0);
     Camera mainCam;
+    
 
-
-    private void Awake()
+		private void Awake()
     {
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
@@ -58,7 +61,9 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        enemyMoving();
+        enemyGravityCheck();
+
+				enemyMoving();
     }
 
     public void setHpBar()
@@ -77,8 +82,8 @@ public class Enemy : MonoBehaviour
         {
             enemyCurHp = 0;
         }
-       
-        enemyCurHp -= damage;
+
+		    enemyCurHp -= damage;
 		    enemyHP.SetEnemyHp(enemyMaxHP,enemyCurHp);
 
         if (enemyCurHp == 0f)
@@ -94,12 +99,31 @@ public class Enemy : MonoBehaviour
         }
 
     }
+  
+ 
 
 
-    /// <summary>
-    /// 에너미가 움직이는 코드
-    /// </summary>
-    private void enemyMoving()
+	private void enemyGravityCheck()
+	{
+    if (isGround == false)
+		{
+			verticalVelocity += Physics.gravity.y * Time.deltaTime;
+			if (verticalVelocity < -10)
+			{
+				verticalVelocity = -10;
+			}
+		}
+		else if (isGround == true)
+		{
+			verticalVelocity = 0;
+		}
+	}
+
+
+	/// <summary>
+	/// 에너미가 움직이는 코드
+	/// </summary>
+	private void enemyMoving()
     {
         moveTimer -= Time.deltaTime;
         if (moveTimer < 0f)
@@ -110,6 +134,10 @@ public class Enemy : MonoBehaviour
         if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == false)
         {
             movingCheck();
+        }
+        else if(boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == true)
+        {
+          isGround = true;
         }
         rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
     }

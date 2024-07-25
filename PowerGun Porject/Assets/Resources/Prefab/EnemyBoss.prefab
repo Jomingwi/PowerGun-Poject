@@ -103,9 +103,14 @@ MonoBehaviour:
   moveSpeed: 5
   bossMaxHp: 200
   bossCurHp: 0
-  onePattern: 0
-  onePattern2: 0
-  onePattern3: 0
+  Pattern: 0
+  PatternTimer: 0
+  Pattern2: 0
+  pattern2Timer: 0
+  Pattern3: 0
+  pattern3Timer: 0
+  playerStunTime: 0
+  playerStunTimer: 0
 --- !u!50 &8999279820295202617
 Rigidbody2D:
   serializedVersion: 4
@@ -132,7 +137,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &4661920811141144831
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -165,8 +170,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.07708168, y: -0.24252605}
-  m_Size: {x: 2.103325, y: 3.646843}
+  m_Offset: {x: -0.07708168, y: -0.18518817}
+  m_Size: {x: 2.103325, y: 3.5321672}
   m_Direction: 0
 --- !u!61 &1763409114700795252
 BoxCollider2D:

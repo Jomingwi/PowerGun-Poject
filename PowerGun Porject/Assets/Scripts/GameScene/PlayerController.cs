@@ -389,7 +389,7 @@ public class PlayerController : MonoBehaviour
         if (verticalVelocity > 0f) return;
 
         RaycastHit2D hit = 
-            Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground","Enemy"));
+        Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
         //박스 센터를 기준으로 박스 사이즈를 체크하고 밑에서 그라운드와 닿는지 체크
 
         if(hit) 
@@ -447,6 +447,8 @@ public class PlayerController : MonoBehaviour
             Explosion goSc = go.GetComponent<Explosion>();
 
             goSc.ImageSize(spriteRenderer.sprite.rect.width);
+
+            //다시하기 메뉴와 나가기 메뉴가 뜨도록 만들어야함
         }
     }
 

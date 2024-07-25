@@ -7,14 +7,12 @@ using UnityEngine.UI;
 
 public class PlayerSkill : MonoBehaviour
 {
-    PlayerController playerController;
-    GameManager gameManager;
     Quaternion angle = Quaternion.Euler(0, 0, 180);
 
     [SerializeField] Transform dynamicObject;
     [SerializeField] Transform trsAttack;
 
-    bool skillshot;
+    bool skillshot = false;
 
     [Header("Çìµå¼¦")]
     [SerializeField] GameObject skillHeadShot;
@@ -61,27 +59,27 @@ public class PlayerSkill : MonoBehaviour
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
+                EnemyBoss boss = collision.GetComponent<EnemyBoss>();
                 enemy.Hit(15);
+                boss.bossHit(15);
             }
             if (isTen == true)
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-                enemy.Hit(3);
+				        EnemyBoss boss = collision.GetComponent<EnemyBoss>();
+				        enemy.Hit(3);
+                boss.bossHit(3);
             }
             if (isShotGun == true)
             {
                 Destroy(gameObject);
                 Enemy enemy = collision.GetComponent<Enemy>();
-                enemy.Hit(3);
+				        EnemyBoss boss = collision.GetComponent<EnemyBoss>();
+				        enemy.Hit(3);
+                boss.bossHit(3);
             }
 
-        }
-        if (skillshot == true && collision.tag == "Player")
-        {
-            Destroy(gameObject);
-            PlayerController player = collision.GetComponent<PlayerController>();
-            player.Hit();
         }
     }
     private void Awake()

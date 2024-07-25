@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +33,10 @@ public class GameManager : MonoBehaviour
 	[Header("보스")]
 	[SerializeField] bool isSpawnBoss = false;
 
+	[Header("보스 UI")]
+	[SerializeField] Slider bossSlider;
+	[SerializeField] TMP_Text bossSliderText;
+	
 
 
 	public GameObject FabExplosion
@@ -91,7 +94,6 @@ public class GameManager : MonoBehaviour
 	{
 		mainCam = Camera.main;
 		enemyCreate();
-
 	}
 
 
@@ -119,9 +121,8 @@ public class GameManager : MonoBehaviour
 				enemySpawnCount++;
 				modifySlider();
 			}
-
-
 		}
+
 
 		if (enemySpawnCount >= enemyMaxSpawnCount)
 		{
@@ -134,8 +135,6 @@ public class GameManager : MonoBehaviour
 	{
 		player.SetPlayerHp(_maxHp, _curHp);
 	}
-
-
 
 
 	/// <summary>
@@ -163,21 +162,55 @@ public class GameManager : MonoBehaviour
 		sliderText.text = $"{enemySpawnCount} / {enemyMaxSpawnCount}";
 	}
 
+
+
 	public void bossSpawn()
 	{
+		if(enemySpawnCount != 0)
+		{
+			return;
+		}
+
 		if (enemySpawnCount == 0)
 		{
 			isSpawnBoss = true;
 		}
+		bossCreate();
 	}
 
-	public void bossCrete()
+	public void bossCreate()
 	{
-		if(isSpawnBoss == true)
+		
+		if (isSpawnBoss == true)
 		{
-			 GameObject go = Instantiate(EnemyBoss.gameObject, enemyBoss.transform.position, Quaternion.identity, transform.parent);
+			GameObject go =  Instantiate(EnemyBoss.gameObject, enemyBoss.transform.position, Quaternion.identity, transform.parent);
+			EnemyBoss goSc = go.GetComponent<EnemyBoss>();
+			bossinitSlider(goSc.bossMaxHp);
 		}
 	}
+
+	/// <summary>
+	/// 보스가 생성됬을때의 최대 체력값
+	/// </summary>
+	/// <param name="maxHP"></param>
+	private void bossinitSlider(float maxHP)
+	{
+		bossSlider.minValue = maxHP;
+		bossSlider.maxValue = maxHP;
+		bossSliderText.text = $"{maxHP}";
+	}
+
+
+	/// <summary>
+	/// 보스의 체력을 업데이트할수있도록 에너미 보스 hit에 참고되는값
+	/// </summary>
+	/// <param name="hp"></param>
+	public void bossModifySlider(float hp)
+	{
+		bossSlider.value = hp;
+		bossSliderText.text = $"{hp / bossSlider.maxValue}";
+	}
+
 
 
 
