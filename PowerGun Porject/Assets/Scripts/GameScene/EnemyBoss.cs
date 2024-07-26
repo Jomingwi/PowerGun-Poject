@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using TreeEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -11,7 +12,9 @@ public class EnemyBoss : MonoBehaviour
 	[SerializeField] public float bossMaxHp;
 	[SerializeField] public float bossCurHp;
 	[SerializeField] float groundCheckLength;
-	bool isGround = false;
+	Transform trsBossPos;
+
+	[SerializeField] bool isGround = false;
 	bool isbossMoving = false;
 	bool isbossPatternChange = false;
 	Vector2 moveDir = new Vector2(1, 0);
@@ -51,10 +54,14 @@ public class EnemyBoss : MonoBehaviour
 		bossCurHp = bossMaxHp;
 	}
 
+	
+
 	void Start()
 	{
 		gameManager = GameManager.Instance;
+		trsBossPos = gameManager.TrsBossPos;
 		fabExplosion = gameManager.FabExplosion;
+		
 	}
 
 
@@ -62,7 +69,7 @@ public class EnemyBoss : MonoBehaviour
 
 	void Update()
 	{
-		if(gameObject!= null) { return; }
+		if (gameObject == null) return;
 		bossGravityCheck();
 		bossGroundCheck();
 		
@@ -70,6 +77,17 @@ public class EnemyBoss : MonoBehaviour
 
 		doAnim();
 	}
+
+	/// <summary>
+	///보스가 돌진
+	/// </summary>
+	private void bossDash()
+	{
+
+	}
+
+
+
 
 	private void bossGroundCheck()
 	{
@@ -95,7 +113,7 @@ public class EnemyBoss : MonoBehaviour
 				verticalVelocity = -10;
 			}
 		}
-		else if(isGround == true)
+		else
 		{
 			verticalVelocity = 0;
 		}
@@ -107,32 +125,27 @@ public class EnemyBoss : MonoBehaviour
 
 	private void bossMoving()
 	{
+		if(isGround == false) { return; } 
+
 		if (isGround == true)
 		{
 			isbossMoving = true;
 			Vector3 playerPos = gameManager.Player.transform.position;
 			Vector3 distance = playerPos - transform.position;
-
-			transform.position = distance;
-			bossScale();
+			bossMovingCheck();
+	
+				rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
 		}
-		rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
+		
 
 	}
 
-	private void bossScale()
+	private void bossMovingCheck()
 	{
-		if (gameManager.Player.transform.position.x < transform.position.x || gameManager.Player.transform.position.x > transform.position.x)
-		{
 			Vector2 scale = transform.localScale;
 			scale.x *= -1;
 			transform.localScale = scale;
 			moveDir.x *= -1;
-		}
-		else
-		{
-			return;
-		}
 	}
 
 	public void bossHit(float damage)
