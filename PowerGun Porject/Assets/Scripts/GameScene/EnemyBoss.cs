@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using TreeEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EnemyBoss : MonoBehaviour
@@ -13,6 +11,7 @@ public class EnemyBoss : MonoBehaviour
 	[SerializeField] public float bossCurHp;
 	[SerializeField] float groundCheckLength;
 	Transform trsBossPos;
+	
 
 	[SerializeField] bool isGround = false;
 	bool isbossMoving = false;
@@ -21,12 +20,17 @@ public class EnemyBoss : MonoBehaviour
 
 	[Header("돌진")]
 	[SerializeField] int Pattern;
+	[SerializeField] int dashSpeed;
 	[SerializeField] float PatternTimer;
 	bool isbossDash;
 
-	[Header("낫 던지기")]
+	[Header("무기 던지기")]
 	[SerializeField] int Pattern2;
+	[SerializeField] Vector2 throwForce;
 	[SerializeField] float pattern2Timer;
+	[SerializeField] GameObject objThrowWeapon;
+	[SerializeField] Transform trsWeapon;
+	
 
 	[Header("점프")]
 	[SerializeField] int Pattern3;
@@ -37,6 +41,8 @@ public class EnemyBoss : MonoBehaviour
 	bool palyerStun;
 	[SerializeField] float playerStunTime;
 	[SerializeField] float playerStunTimer;
+
+	int curPattern = 0;
 
 	GameObject fabExplosion;
 	GameManager gameManager;
@@ -61,7 +67,6 @@ public class EnemyBoss : MonoBehaviour
 		gameManager = GameManager.Instance;
 		trsBossPos = gameManager.TrsBossPos;
 		fabExplosion = gameManager.FabExplosion;
-		
 	}
 
 
@@ -83,7 +88,31 @@ public class EnemyBoss : MonoBehaviour
 	/// </summary>
 	private void bossDash()
 	{
+		if (curPattern == 0)
+		{
+			Vector3 playerPos = gameManager.Player.transform.position;
+			Vector3 distance = playerPos - trsBossPos.position;
 
+			distance.x = distance.x < 0 ? -1 : 1;
+			rigid.velocity = new Vector2(distance.x * dashSpeed, rigid.velocity.y);
+		}
+		curPattern++;
+	}
+
+	private void createWeapon()
+	{
+		if(curPattern == 1)
+		{
+			GameObject go = Instantiate(objThrowWeapon, trsWeapon.position, trsWeapon.rotation, gameManager.trsSpawnPos);
+			EnemyThowWeapon goSc = go.GetComponent<EnemyThowWeapon>();
+			bool isRight = transform.localScale.x < 0 ? true : false;
+			Vector2 fixedThrowforce = throwForce;
+			if (isRight == false)
+			{
+				fixedThrowforce = -throwForce;
+			}
+			goSc.SetForce(trsWeapon.rotation * fixedThrowforce, isRight);
+		}
 	}
 
 
@@ -165,9 +194,9 @@ public class EnemyBoss : MonoBehaviour
 			GameObject go = Instantiate(fabExplosion.gameObject, transform.position, Quaternion.identity, transform.parent);
 			Explosion goSc = go.GetComponent<Explosion>();
 			goSc.ImageSize(spriteRenderer.sprite.rect.width);
-
 			//게임 클리어 화면이 뜨게 만들어야함
 		}
+
 	}
 
 

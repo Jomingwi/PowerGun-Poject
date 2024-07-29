@@ -75,19 +75,19 @@ public class PlayerController : MonoBehaviour
             if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
             {
                 isHit = true;
-                Hit();
+                Hit(3);
             }
             if (other.tag == Tool.GetTag(GameTags.Enemy))
             {
                 isHit = true;
-                Hit();
+                Hit(3);
             }
         }
 
         if (isGround == false && boxColl.IsTouchingLayers(LayerMask.GetMask("Enemy"))== true)
         {
             isHit = true;
-            Hit();
+            Hit(3);
         }
        
     }
@@ -433,10 +433,10 @@ public class PlayerController : MonoBehaviour
 
 
 
-    public void Hit()
+    public void Hit(float damage)
     {
         playerHit();
-        curHp -= 3;
+        curHp -= damage;
         SetPlayerHp(maxHp, curHp);
 
 

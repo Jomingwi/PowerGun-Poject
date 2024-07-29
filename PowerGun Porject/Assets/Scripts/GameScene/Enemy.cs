@@ -7,151 +7,192 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public enum eEnemyType
-    {
-        EnemyFly,
-        EnemyWalk,
-        EnemyDragon,
-        EnemyBoss,
-    }
+	public enum eEnemyType
+	{
+		EnemyFly,
+		EnemyWalk,
+		EnemyDragon,
+		EnemyBoss,
+	}
 
 
-    [Header("적 설정")]
-    [SerializeField] eEnemyType enemyType;
+	[Header("적 설정")]
+	[SerializeField] eEnemyType enemyType;
 
-    [SerializeField] float moveSpeed;
-    [SerializeField] public float enemyCurHp;
-    [SerializeField] public float enemyMaxHP;
-    [SerializeField] float moveTimer = 0;
-    float moveTime = 3;
-    bool isGround;
-    float verticalVelocity;
-
-
-    GameObject fabExplosion;
-    GameManager gameManager;
-    SpriteRenderer spriteRenderer;
-    EnemyHp enemyHP;
-
-    Rigidbody2D rigid;
-    BoxCollider2D boxcoll;
-    Vector3 moveDir = new Vector2(1, 0);
-    Camera mainCam;
+	[SerializeField] float moveSpeed;
+	[SerializeField] public float enemyCurHp;
+	[SerializeField] public float enemyMaxHP;
+	[SerializeField] float moveTimer = 0;
+	float moveTime = 3;
+	bool isGround;
+	float verticalVelocity;
 
 
-    private void Awake()
-    {
-        spriteRenderer = transform.GetComponent<SpriteRenderer>();
-        rigid = GetComponent<Rigidbody2D>();
-        boxcoll = GetComponentInChildren<BoxCollider2D>();
-        enemyCurHp = enemyMaxHP;
-        moveTimer = moveTime;
-    }
+	GameObject fabExplosion;
+	GameManager gameManager;
+	SpriteRenderer spriteRenderer;
+	EnemyHp enemyHP;
+	Transform playerPos;
+
+	Rigidbody2D rigid;
+	BoxCollider2D boxcoll;
+	Vector3 moveDir = new Vector2(1, 0);
+	Camera mainCam;
 
 
-
-    private void Start()
-    {
-        gameManager = GameManager.Instance;
-        fabExplosion = gameManager.FabExplosion;
-        mainCam = Camera.main;
-        setHpBar();
-    }
-
-
-    private void Update()
-    {
-        enemyGravityCheck();
-
-        enemyMoving();
-    }
-
-    public void setHpBar()
-    {
-        if (gameManager == null) { return; }
-
-        GameObject go = Instantiate(gameManager.FabEnemyHp, gameManager.trsCanvas.transform.position, Quaternion.identity, gameManager.trsHpBarPos); ;
-        enemyHP = go.GetComponent<EnemyHp>();
-        enemyHP.SetEnemy(this);
-    }
-
-
-    public void Hit(float damage)
-    {
-        if (enemyCurHp < 0)
-        {
-            enemyCurHp = 0;
-        }
-
-        enemyCurHp -= damage;
-        enemyHP.SetEnemyHp(enemyMaxHP, enemyCurHp);
-
-        if (enemyCurHp == 0f)
-        {
-            Destroy(gameObject);
-
-
-            GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
-            Explosion goSc = go.GetComponent<Explosion>();
-            goSc.ImageSize(spriteRenderer.sprite.rect.width);
-
-            gameManager.enemyKillCount();
-        }
-
-    }
+	private void Awake()
+	{
+		spriteRenderer = transform.GetComponent<SpriteRenderer>();
+		rigid = GetComponent<Rigidbody2D>();
+		boxcoll = GetComponentInChildren<BoxCollider2D>();
+		enemyCurHp = enemyMaxHP;
+		moveTimer = moveTime;
+	}
 
 
 
+	private void Start()
+	{
+		gameManager = GameManager.Instance;
+		fabExplosion = gameManager.FabExplosion;
+		mainCam = Camera.main;
+		playerPos = gameManager.Player.transform;
+		setHpBar();
 
-    private void enemyGravityCheck()
-    {
-        if (isGround == false)
-        {
-            verticalVelocity += Physics.gravity.y * Time.deltaTime;
-            if (verticalVelocity < -10)
-            {
-                verticalVelocity = -10;
-            }
-        }
-        else if (isGround == true)
-        {
-            verticalVelocity = 0;
-        }
-    }
+	}
 
 
-    /// <summary>
-    /// 에너미가 움직이는 코드
-    /// </summary>
-    private void enemyMoving()
-    {
-        moveTimer -= Time.deltaTime;
-        if (moveTimer < 0f)
-        {
-            movingCheck();
-            moveTimer = moveTime;
-        }
-        if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == false)
-        {
-            movingCheck();
-        }
-        else if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == true)
-        {
-            isGround = true;
-        }
-        rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
-    }
+	private void Update()
+	{
+		enemyGravityCheck();
+		moving();
+	}
 
-    /// <summary>
-    /// 방향을 반대로 돌림
-    /// </summary>
-    private void movingCheck()
-    {
-        Vector2 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+	
+	private void moving()
+	{
+		if (enemyInView() == true)
+		{
+			enemyMovingCheck();
+		}
+		else
+		{
+			enemyMoving();
+		}
+	}
 
-        moveDir.x *= -1;
-    }
+
+	/// <summary>
+	/// 에너미가 카메라 안에 들어오면 true
+	/// </summary>
+	/// <returns></returns>
+	private bool enemyInView()
+	{
+		Vector3 viewPortPoint = mainCam.ViewportToWorldPoint(transform.position);
+		return viewPortPoint.x > 0 && viewPortPoint.x < 1 && viewPortPoint.y > 0 && viewPortPoint.y < 1;
+	}
+
+	/// <summary>
+	/// 에너미가 플레이어 포지션쪽으로 움직임
+	/// </summary>
+	private void enemyMovingCheck()
+	{
+		Vector3 distance = playerPos.position - transform.position;
+		Vector3 scale = transform.localScale;
+		distance.x = distance.x < 0 ? -1 : 1;
+		scale.x = distance.x < 0 ? -1 : 1;
+		transform.localScale = scale;
+		rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
+	}
+
+
+
+	public void setHpBar()
+	{
+		if (gameManager == null) { return; }
+
+		GameObject go = Instantiate(gameManager.FabEnemyHp, gameManager.trsCanvas.transform.position, Quaternion.identity, gameManager.trsHpBarPos); ;
+		enemyHP = go.GetComponent<EnemyHp>();
+		enemyHP.SetEnemy(this);
+	}
+
+
+	public void Hit(float damage)
+	{
+		if (enemyCurHp < 0)
+		{
+			enemyCurHp = 0;
+		}
+
+		enemyCurHp -= damage;
+		enemyHP.SetEnemyHp(enemyMaxHP, enemyCurHp);
+
+		if (enemyCurHp == 0f)
+		{
+			Destroy(gameObject);
+
+
+			GameObject go = Instantiate(fabExplosion, transform.position, Quaternion.identity, transform.parent);
+			Explosion goSc = go.GetComponent<Explosion>();
+			goSc.ImageSize(spriteRenderer.sprite.rect.width);
+
+			gameManager.enemyKillCount();
+		}
+
+	}
+
+
+
+
+	private void enemyGravityCheck()
+	{
+		if (isGround == false)
+		{
+			verticalVelocity += Physics.gravity.y * Time.deltaTime;
+			if (verticalVelocity < -10)
+			{
+				verticalVelocity = -10;
+			}
+		}
+		else if (isGround == true)
+		{
+			verticalVelocity = 0;
+		}
+	}
+
+
+	/// <summary>
+	/// 에너미가 움직이는 코드
+	/// </summary>
+	private void enemyMoving()
+	{
+		moveTimer -= Time.deltaTime;
+		if (moveTimer < 0f)
+		{
+			enemyScale();
+			moveTimer = moveTime;
+		}
+		if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == false)
+		{
+			enemyScale();
+		}
+		else if (boxcoll.IsTouchingLayers(LayerMask.GetMask("Ground")) == true)
+		{
+			isGround = true;
+		}
+		rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
+	}
+
+	/// <summary>
+	/// 방향을 반대로 돌림
+	/// </summary>
+	private void enemyScale()
+	{
+		Vector2 scale = transform.localScale;
+		scale.x *= -1;
+		transform.localScale = scale;
+
+		moveDir.x *= -1;
+	}
 
 }
