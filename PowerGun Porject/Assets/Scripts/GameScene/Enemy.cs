@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour
 	{
 		if (enemyInView() == true)
 		{
-			enemyMovingCheck();
+			moveToPlayer();
 		}
 		else
 		{
@@ -88,21 +88,24 @@ public class Enemy : MonoBehaviour
 	/// <returns></returns>
 	private bool enemyInView()
 	{
-		Vector3 viewPortPoint = mainCam.ViewportToWorldPoint(transform.position);
+		Vector3 viewPortPoint = mainCam.WorldToViewportPoint(transform.position);
 		return viewPortPoint.x > 0 && viewPortPoint.x < 1 && viewPortPoint.y > 0 && viewPortPoint.y < 1;
 	}
 
 	/// <summary>
 	/// 에너미가 플레이어 포지션쪽으로 움직임
 	/// </summary>
-	private void enemyMovingCheck()
+	private void moveToPlayer()
 	{
 		Vector3 distance = playerPos.position - transform.position;
-		Vector3 scale = transform.localScale;
 		distance.x = distance.x < 0 ? -1 : 1;
-		scale.x = distance.x < 0 ? -1 : 1;
+		
+        rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
+       
+
+		Vector3 scale = transform.localScale;
+		scale.x = playerPos.position.x < transform.position.x ? -1 : 1;
 		transform.localScale = scale;
-		rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
 	}
 
 
@@ -140,8 +143,6 @@ public class Enemy : MonoBehaviour
 		}
 
 	}
-
-
 
 
 	private void enemyGravityCheck()
