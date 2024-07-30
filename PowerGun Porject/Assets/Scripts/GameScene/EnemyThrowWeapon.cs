@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyThowWeapon : MonoBehaviour
 {
-	GameManager gameManager;
+	
   Rigidbody2D rigid;
 	Vector2 force;
 	bool right;
@@ -33,7 +33,6 @@ public class EnemyThowWeapon : MonoBehaviour
 
 	void Start()
     {
-			gameManager = GameManager.Instance;
 				rigid.AddForce(force, ForceMode2D.Impulse);
     }
 

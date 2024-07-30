@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,10 +17,10 @@ public class PlayerController : MonoBehaviour
     GameObject fabExplosion;
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
-    
+	  Camera mainCam;
 
 
-    [Header("플레이어 이동")]
+	  [Header("플레이어 이동")]
     [SerializeField] float moveSpeed;
     [SerializeField] bool isGround;
     [SerializeField] float groundCheckLength;
@@ -65,7 +66,14 @@ public class PlayerController : MonoBehaviour
     float slideCoolTimer= 0f;
     bool isSlide;
 
-    Camera mainCam;
+
+    [Header("스턴")]
+    EnemyBoss enemyBoss;
+    [SerializeField] float stunTimer = 0;
+    [SerializeField] float stunTime = 1;
+    bool isStun;
+
+    
 
 
     public void TriggerEnter(HitBox.ehitType type, Collider2D other)
@@ -130,12 +138,16 @@ public class PlayerController : MonoBehaviour
         gameManager = GameManager.Instance;
         fabExplosion = gameManager.FabExplosion;
         gameManager.Player = this;
-    }
+		
+
+		}
 
     
     void Update()
     {
-        coolTimeCheck();
+        stunCheck();
+
+				coolTimeCheck();
         groundCheck();
         playerHit();
 
@@ -451,5 +463,23 @@ public class PlayerController : MonoBehaviour
             //다시하기 메뉴와 나가기 메뉴가 뜨도록 만들어야함
         }
     }
+
+ private void stun()
+  {
+    
+	}
+
+  private void stunCheck()
+  {
+    if(stunTimer > 0)
+    {
+      stunTimer -= Time.deltaTime;
+      if(stunTimer < 0)
+      {
+        stunTimer = 0;
+				isStun = false;
+			}
+    }
+  }
 
 }

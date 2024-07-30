@@ -6,6 +6,13 @@ public enum GameTags
     Skill
 }
 
+public enum Difficulty
+{
+  Easy,
+  Normal,
+  Hard
+}
+
 
 public class Tool
 {

@@ -39,6 +39,7 @@ public class Enemy : MonoBehaviour
 	Vector3 moveDir = new Vector2(1, 0);
 	Camera mainCam;
 
+	
 
 	private void Awake()
 	{
@@ -100,7 +101,7 @@ public class Enemy : MonoBehaviour
 		Vector3 distance = playerPos.position - transform.position;
 		distance.x = distance.x < 0 ? -1 : 1;
 		
-        rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
+    rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
        
 
 		Vector3 scale = transform.localScale;

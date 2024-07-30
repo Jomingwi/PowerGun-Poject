@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 
@@ -11,7 +12,8 @@ public class EnemyBoss : MonoBehaviour
 	[SerializeField] public float bossCurHp;
 	[SerializeField] float groundCheckLength;
 	Transform trsBossPos;
-	
+	float timer = 0;
+
 
 	[SerializeField] bool isGround = false;
 	bool isbossMoving = false;
@@ -19,30 +21,27 @@ public class EnemyBoss : MonoBehaviour
 	Vector2 moveDir = new Vector2(1, 0);
 
 	[Header("돌진")]
-	[SerializeField] int Pattern;
 	[SerializeField] int dashSpeed;
-	[SerializeField] float PatternTimer;
 	bool isbossDash;
 
 	[Header("무기 던지기")]
-	[SerializeField] int Pattern2;
 	[SerializeField] Vector2 throwForce;
-	[SerializeField] float pattern2Timer;
 	[SerializeField] GameObject objThrowWeapon;
 	[SerializeField] Transform trsWeapon;
-	
+
 
 	[Header("점프")]
-	[SerializeField] int Pattern3;
-	[SerializeField] float pattern3Timer;
 	float verticalVelocity = 0;
+	[SerializeField] int jumpForce;
+	bool isJump = false;
+
 
 	[Header("플레이어 기절")]
-	bool palyerStun;
 	[SerializeField] float playerStunTime;
 	[SerializeField] float playerStunTimer;
+	bool isStun = false;
 
-	int curPattern = 0;
+
 
 	GameObject fabExplosion;
 	GameManager gameManager;
@@ -50,6 +49,11 @@ public class EnemyBoss : MonoBehaviour
 	Rigidbody2D rigid;
 	SpriteRenderer spriteRenderer;
 	BoxCollider2D boxcoll;
+
+	Difficulty difficulty;
+	int curPattern = 0;
+	
+
 
 	private void Awake()
 	{
@@ -60,7 +64,7 @@ public class EnemyBoss : MonoBehaviour
 		bossCurHp = bossMaxHp;
 	}
 
-	
+
 
 	void Start()
 	{
@@ -77,32 +81,76 @@ public class EnemyBoss : MonoBehaviour
 		if (gameObject == null) return;
 		bossGravityCheck();
 		bossGroundCheck();
-		
+
+	
+
 		bossMoving();
 
 		doAnim();
 	}
+
+	private void bossPattern()
+	{
+		switch (difficulty)
+		{
+			case Difficulty.Easy:
+				curPattern = Random.Range(0, 1);
+				break;
+			case Difficulty.Normal:
+				curPattern = Random.Range(0, 2);
+				break;
+			case Difficulty.Hard:
+				curPattern = Random.Range(0, 3);
+				break;
+		}
+		
+	}
+
+	private void executePattern()
+	{
+		if (timer < 1)
+		{
+			timer += Time.deltaTime;
+			if (curPattern == 0) { bossDash(); }
+			if (curPattern == 1) { createWeapon(); }
+			if (curPattern == 2) { jump(); }
+			if (curPattern == 3) { Getstun(); }
+		}
+
+		if(timer >= 1)
+		{
+			timer = 0;
+		}
+		
+	}
+		
+	
+
+
+
 
 	/// <summary>
 	///보스가 돌진
 	/// </summary>
 	private void bossDash()
 	{
-		if (curPattern == 0)
-		{
+		
 			Vector3 playerPos = gameManager.Player.transform.position;
-			Vector3 distance = playerPos - trsBossPos.position;
-
+			Vector3 distance = playerPos - transform.position;
 			distance.x = distance.x < 0 ? -1 : 1;
+
 			rigid.velocity = new Vector2(distance.x * dashSpeed, rigid.velocity.y);
-		}
-		curPattern++;
+
+			Vector3 scale = transform.localScale;
+			scale.x = playerPos.x < transform.position.x ? -1 : 1;
+			transform.localScale = scale;
+		
 	}
 
 	private void createWeapon()
 	{
-		if(curPattern == 1)
-		{
+		
+
 			GameObject go = Instantiate(objThrowWeapon, trsWeapon.position, trsWeapon.rotation, gameManager.trsSpawnPos);
 			EnemyThowWeapon goSc = go.GetComponent<EnemyThowWeapon>();
 			bool isRight = transform.localScale.x < 0 ? true : false;
@@ -112,7 +160,27 @@ public class EnemyBoss : MonoBehaviour
 				fixedThrowforce = -throwForce;
 			}
 			goSc.SetForce(trsWeapon.rotation * fixedThrowforce, isRight);
-		}
+		
+
+	}
+
+	private void jump()
+	{
+			Vector3 playerPos = gameManager.Player.transform.position;
+			Vector3 distance = playerPos - transform.position;
+			distance.x = distance.x < 0 ? -1 : 1;
+
+			rigid.velocity = new Vector2(distance.x * moveSpeed, jumpForce);
+
+			Vector3 scale = transform.localScale;
+			scale.x = playerPos.x < transform.position.x ? -1 : 1;
+			transform.localScale = scale;
+		
+	}
+
+	public void Getstun()
+	{
+		
 	}
 
 
@@ -121,16 +189,16 @@ public class EnemyBoss : MonoBehaviour
 	private void bossGroundCheck()
 	{
 		isGround = false;
-		if(verticalVelocity > 0 ) { return; }
+		if (verticalVelocity > 0) { return; }
 
-		RaycastHit2D hit = 
+		RaycastHit2D hit =
 			Physics2D.BoxCast(boxcoll.bounds.center, boxcoll.bounds.size, 0, Vector2.down, groundCheckLength, LayerMask.GetMask("Ground"));
 
-		if(hit)
+		if (hit)
 		{
 			isGround = true;
 		}
-  }
+	}
 
 	private void bossGravityCheck()
 	{
@@ -148,38 +216,30 @@ public class EnemyBoss : MonoBehaviour
 		}
 	}
 
-	
 
-	
+
+
 
 	private void bossMoving()
 	{
-		if(isGround == false) { return; } 
+		if (isGround == false) { return; }
 
-		if (isGround == true)
-		{
-			isbossMoving = true;
-			Vector3 playerPos = gameManager.Player.transform.position;
-			Vector3 distance = playerPos - transform.position;
-			bossMovingCheck();
-	
-				rigid.velocity = new Vector2(moveDir.x * moveSpeed, rigid.velocity.y);
-		}
-		
+		Vector3 playerPos = gameManager.Player.transform.position;
+		Vector3 distance = playerPos - transform.position;
+		distance.x = distance.x < 0 ? -1 : 1;
 
+		rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
+
+
+		Vector3 scale = transform.localScale;
+		scale.x = playerPos.x < transform.position.x ? -1 : 1;
+		transform.localScale = scale;
 	}
 
-	private void bossMovingCheck()
-	{
-			Vector2 scale = transform.localScale;
-			scale.x *= -1;
-			transform.localScale = scale;
-			moveDir.x *= -1;
-	}
 
 	public void bossHit(float damage)
 	{
-		
+
 		if (bossCurHp < 0)
 		{
 			bossCurHp = 0;
@@ -206,10 +266,5 @@ public class EnemyBoss : MonoBehaviour
 		anim.SetBool("bossMoving", isbossMoving);
 		anim.SetBool("bossDash", isbossDash);
 	}
-
-
-
-
-
 
 }

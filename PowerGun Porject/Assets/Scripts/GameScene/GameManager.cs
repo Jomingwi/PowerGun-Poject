@@ -48,8 +48,6 @@ public class GameManager : MonoBehaviour
 		get { return fabEnemyHP; }
 	}
 
-
-
 	PlayerController player;
 
 	public PlayerController Player
