@@ -3,7 +3,8 @@ public enum GameTags
     Player,
     Enemy,
     Bullet,
-    Skill
+    Skill,
+    EnemyBoss
 }
 
 public enum Difficulty
@@ -16,6 +17,9 @@ public enum Difficulty
 
 public class Tool
 {
+    public static bool isStartMainScene = false;
+    public static string difficultKey = "DifficultKey";
+
     public static string GetTag(GameTags value)
     {
         return value.ToString();

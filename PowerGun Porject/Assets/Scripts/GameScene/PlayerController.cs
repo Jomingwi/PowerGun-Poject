@@ -17,10 +17,10 @@ public class PlayerController : MonoBehaviour
     GameObject fabExplosion;
     GameManager gameManager;
     SpriteRenderer spriteRenderer;
-	  Camera mainCam;
+    Camera mainCam;
 
 
-	  [Header("플레이어 이동")]
+    [Header("플레이어 이동")]
     [SerializeField] float moveSpeed;
     [SerializeField] bool isGround;
     [SerializeField] float groundCheckLength;
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     bool doubleJump;
     float playerDamageCoolTime = 0.1f;
     float playerDamageCoolTimer = 0.0f;
- 
+
 
     [Header("플레이어 설정")]
     [SerializeField] float maxHp = 100;
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] TMP_Text hpText;
     bool isHit;
     bool playerDamage;
-    
+
 
 
 
@@ -52,18 +52,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dashCoolTime = 5f;
     [SerializeField] float dashTime = 0.5f;
     float dashTimer = 0f;
-    float dashCoolTimer= 0f;
+    float dashCoolTimer = 0f;
     bool isDash;
-   
+
 
     [Header("슬라이딩")]
     [SerializeField] Image slideImageFill;
     [SerializeField] TMP_Text textSlideCoolTime;
     [SerializeField] float slideSpeed = 10f;
-    [SerializeField] float slideCoolTime =2;
+    [SerializeField] float slideCoolTime = 2;
     [SerializeField] float slideTime = 0.5f;
     float slideTimer = 0f;
-    float slideCoolTimer= 0f;
+    float slideCoolTimer = 0f;
     bool isSlide;
 
 
@@ -73,12 +73,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float stunTime = 1;
     bool isStun;
 
-    
+
 
 
     public void TriggerEnter(HitBox.ehitType type, Collider2D other)
     {
-        if(type == HitBox.ehitType.bodyCheck)
+        if (type == HitBox.ehitType.bodyCheck)
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Spike"))
             {
@@ -90,17 +90,15 @@ public class PlayerController : MonoBehaviour
                 isHit = true;
                 Hit(3);
             }
+            if (other.tag == Tool.GetTag(GameTags.EnemyBoss))
+            {
+                isHit = true;
+                Hit(5);
+            }
         }
-
-        if (isGround == false && boxColl.IsTouchingLayers(LayerMask.GetMask("Enemy"))== true)
-        {
-            isHit = true;
-            Hit(3);
-        }
-       
     }
 
-    public void TriggerExit(HitBox.ehitType type , Collider2D other) 
+    public void TriggerExit(HitBox.ehitType type, Collider2D other)
     {
         if (type == HitBox.ehitType.bodyCheck)
         {
@@ -112,11 +110,10 @@ public class PlayerController : MonoBehaviour
             {
                 isHit = false;
             }
-        }
-
-        if (isGround == false && boxColl.IsTouchingLayers(LayerMask.GetMask("Enemy")) == true)
-        {
-            isHit = false;
+            if (other.tag == Tool.GetTag(GameTags.EnemyBoss))
+            {
+                isHit = false;
+            }
         }
     }
 
@@ -129,7 +126,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = transform.GetComponent<SpriteRenderer>();
         initUI();
         curHp = maxHp;
-        
+
     }
 
     void Start()
@@ -138,16 +135,16 @@ public class PlayerController : MonoBehaviour
         gameManager = GameManager.Instance;
         fabExplosion = gameManager.FabExplosion;
         gameManager.Player = this;
-		
 
-		}
 
-    
+    }
+
+
     void Update()
     {
         stunCheck();
 
-				coolTimeCheck();
+        coolTimeCheck();
         groundCheck();
         playerHit();
 
@@ -157,14 +154,14 @@ public class PlayerController : MonoBehaviour
         slide();
 
         camMoving();
-      
+
         gravityCheck();
 
         doAnim();
     }
 
-    
-   
+
+
 
 
     private void playerHit()
@@ -173,29 +170,29 @@ public class PlayerController : MonoBehaviour
         {
             playerDamage = true;
             playerDamageCoolTimer = playerDamageCoolTime;
-            rigid.velocity = new Vector2(transform.localScale.x > 0 ? 5 : -5 , jumpForce);
+            rigid.velocity = new Vector2(transform.localScale.x > 0 ? 5 : -5, jumpForce);
         }
 
-        if(playerDamageCoolTimer == 0f)
+        if (playerDamageCoolTimer == 0f)
         {
             playerDamage = false;
         }
-        
+
     }
 
 
     private void slide()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl)  == true && slideCoolTimer == 0f  && slideTimer == 0f )
+        if (Input.GetKeyDown(KeyCode.LeftControl) == true && slideCoolTimer == 0f && slideTimer == 0f)
         {
-            if(isGround == false) { return; }
+            if (isGround == false) { return; }
             isSlide = true;
             slideCoolTimer = slideCoolTime;
             slideTimer = slideTime;
             verticalVelocity = 0;
             rigid.velocity = new Vector2(transform.localScale.x > 0 ? -slideSpeed : slideSpeed, verticalVelocity);
         }
-        if(slideTimer == 0f)
+        if (slideTimer == 0f)
         {
             isSlide = false;
         }
@@ -203,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
     private void dash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) == true && dashCoolTimer == 0f && dashTimer == 0f )
+        if (Input.GetKeyDown(KeyCode.LeftShift) == true && dashCoolTimer == 0f && dashTimer == 0f)
         {
             isDash = true;
             dashCoolTimer = dashCoolTime;
@@ -220,10 +217,10 @@ public class PlayerController : MonoBehaviour
 
     private void coolTimeCheck()
     {
-        if(playerDamageCoolTimer > 0f )
+        if (playerDamageCoolTimer > 0f)
         {
             playerDamageCoolTimer -= Time.deltaTime;
-            if(playerDamageCoolTimer < 0f )
+            if (playerDamageCoolTimer < 0f)
             {
                 playerDamageCoolTimer = 0f;
             }
@@ -232,20 +229,20 @@ public class PlayerController : MonoBehaviour
         if (doubleJumpCoolTimer > 0f)
         {
             doubleJumpCoolTimer -= Time.deltaTime;
-            if(doubleJumpCoolTimer < 0f)
+            if (doubleJumpCoolTimer < 0f)
             {
                 doubleJumpCoolTimer = 0f;
             }
         }
 
-        if(dashCoolTimer > 0f)
+        if (dashCoolTimer > 0f)
         {
-            
-            dashCoolTimer -= Time .deltaTime;
-            if(dashCoolTimer < 0f)
+
+            dashCoolTimer -= Time.deltaTime;
+            if (dashCoolTimer < 0f)
             {
                 dashCoolTimer = 0f;
-                
+
             }
             dashImageFill.fillAmount = 1 - dashCoolTimer / dashCoolTime;
             textDashCoolTime.text = dashCoolTimer.ToString("F1");
@@ -258,26 +255,26 @@ public class PlayerController : MonoBehaviour
 
         if (dashTimer > 0f)
         {
-            dashTimer -= Time .deltaTime;
-            if(dashTimer < 0f)
+            dashTimer -= Time.deltaTime;
+            if (dashTimer < 0f)
             {
                 dashTimer = 0f;
             }
         }
 
-        if(slideTimer > 0f)
-        { 
-            slideTimer -= Time .deltaTime; 
-            if(slideTimer < 0f)
+        if (slideTimer > 0f)
+        {
+            slideTimer -= Time.deltaTime;
+            if (slideTimer < 0f)
             {
                 slideTimer = 0f;
             }
         }
 
-        if(slideCoolTimer > 0f )
+        if (slideCoolTimer > 0f)
         {
-           
-            slideCoolTimer -= Time .deltaTime;
+
+            slideCoolTimer -= Time.deltaTime;
             if (slideCoolTimer < 0f)
             {
                 slideCoolTimer = 0f;
@@ -287,7 +284,7 @@ public class PlayerController : MonoBehaviour
             textSlideCoolTime.text = slideCoolTimer.ToString("F1");
             textSlideCoolTime.enabled = true;
         }
-        if(slideCoolTimer == 0f)
+        if (slideCoolTimer == 0f)
         {
             textSlideCoolTime.enabled = false;
         }
@@ -305,18 +302,18 @@ public class PlayerController : MonoBehaviour
     {
         if (isGround == false)
         {
-            if (doubleJumpCoolTimer ==0 && Input.GetKeyDown(KeyCode.Space) == true)
+            if (doubleJumpCoolTimer == 0 && Input.GetKeyDown(KeyCode.Space) == true)
             {
                 doubleJump = true;
             }
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) == true )
+        if (Input.GetKeyDown(KeyCode.Space) == true)
         {
             isJump = true;
         }
-        
+
     }
 
     /// <summary>
@@ -324,11 +321,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void gravityCheck()
     {
-        if (dashTimer > 0f || slideTimer > 0f )
+        if (dashTimer > 0f || slideTimer > 0f || playerDamageCoolTimer > 0f)
         {
             return;
         }
-        
+
 
         if (doubleJump == true)
         {
@@ -354,7 +351,7 @@ public class PlayerController : MonoBehaviour
         {
             verticalVelocity = 0;
         }
-        rigid.velocity = new Vector2(rigid.velocity.x , verticalVelocity);
+        rigid.velocity = new Vector2(rigid.velocity.x, verticalVelocity);
     }
 
     /// <summary>
@@ -363,11 +360,11 @@ public class PlayerController : MonoBehaviour
     private void moving()
     {
         if (dashTimer > 0 || slideTimer > 0 || playerDamageCoolTimer > 0)
-        { 
-            return; 
+        {
+            return;
         }
 
-        moveDir.x = Input.GetAxisRaw("Horizontal") * moveSpeed ;
+        moveDir.x = Input.GetAxisRaw("Horizontal") * moveSpeed;
         moveDir.y = rigid.velocity.y;
         rigid.velocity = moveDir;
     }
@@ -379,11 +376,11 @@ public class PlayerController : MonoBehaviour
     private void camMoving()
     {
         Vector3 playerScale = transform.localScale;
-        if(playerScale.x != -1.0f && moveDir.x > 0)
+        if (playerScale.x != -1.0f && moveDir.x > 0)
         {
             playerScale.x = -1.0f;
         }
-        else if(playerScale.x != 1.0f && moveDir.x < 0)
+        else if (playerScale.x != 1.0f && moveDir.x < 0)
         {
             playerScale.x = 1.0f;
         }
@@ -400,18 +397,18 @@ public class PlayerController : MonoBehaviour
 
         if (verticalVelocity > 0f) return;
 
-        RaycastHit2D hit = 
-        Physics2D.BoxCast(boxColl.bounds.center , boxColl.bounds.size ,0f , Vector2.down , groundCheckLength , LayerMask.GetMask("Ground"));
+        RaycastHit2D hit =
+        Physics2D.BoxCast(boxColl.bounds.center, boxColl.bounds.size, 0f, Vector2.down, groundCheckLength, LayerMask.GetMask("Ground"));
         //박스 센터를 기준으로 박스 사이즈를 체크하고 밑에서 그라운드와 닿는지 체크
 
-        if(hit) 
+        if (hit)
         {
             isGround = true; //닿으면 true로 변경
         }
-        
+
     }
 
-   
+
 
     private void doAnim()
     {
@@ -439,7 +436,7 @@ public class PlayerController : MonoBehaviour
     public void SetPlayerHp(float _maxhp, float _curHp)
     {
         _curHp = curHp;
-        imgPlayerHp.fillAmount = _curHp/_maxhp;
+        imgPlayerHp.fillAmount = _curHp / _maxhp;
         hpText.text = _curHp.ToString();
     }
 
@@ -464,22 +461,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
- private void stun()
-  {
-    
-	}
-
-  private void stunCheck()
-  {
-    if(stunTimer > 0)
+    private void stun()
     {
-      stunTimer -= Time.deltaTime;
-      if(stunTimer < 0)
-      {
-        stunTimer = 0;
-				isStun = false;
-			}
+
     }
-  }
+
+    private void stunCheck()
+    {
+        if (stunTimer > 0)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer < 0)
+            {
+                stunTimer = 0;
+                isStun = false;
+            }
+        }
+    }
 
 }

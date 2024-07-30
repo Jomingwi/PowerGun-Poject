@@ -102,8 +102,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 2
-  moveSpeed: 5
-  enemyHP: 6
+  moveSpeed: 3
+  enemyCurHp: 0
   enemyMaxHP: 6
   moveTimer: 0
 --- !u!95 &8803069818085300133

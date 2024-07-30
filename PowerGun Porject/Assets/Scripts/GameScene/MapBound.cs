@@ -7,9 +7,12 @@ public class MapBound : MonoBehaviour
 {
     Camera mainCam;
     [SerializeField] public BoxCollider2D coll;
+    [SerializeField] public BoxCollider2D bossColl;
     public Bounds curBound;
     [SerializeField] Transform trsPlayer;
     [SerializeField] Transform trsBackGround;
+
+    EnemyBoss EnemyBoss;
 
     void Start()
     {
@@ -37,6 +40,10 @@ public class MapBound : MonoBehaviour
         float width = height * mainCam.aspect; // aspect  => ∫Ò¿≤ width / height
 
         curBound = coll.bounds;
+        if(EnemyBoss != null)
+        {
+            curBound = bossColl.bounds;
+        }
 
         float minX = curBound.min.x + width;
         float minY = curBound.min.y + height;

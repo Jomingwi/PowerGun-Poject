@@ -39,16 +39,23 @@ public class Enemy : MonoBehaviour
 	Vector3 moveDir = new Vector2(1, 0);
 	Camera mainCam;
 
-	
+    public void difficultyHp(Difficulty difficulty)
+    {
+       if(difficulty == Difficulty.Easy) { enemyMaxHP *= 0.7f; }
+       if(difficulty == Difficulty.Hard) { enemyMaxHP *= 1.5f; }
 
-	private void Awake()
+		enemyCurHp = enemyMaxHP;
+    }
+
+
+    private void Awake()
 	{
 		spriteRenderer = transform.GetComponent<SpriteRenderer>();
 		rigid = GetComponent<Rigidbody2D>();
 		boxcoll = GetComponentInChildren<BoxCollider2D>();
-		enemyCurHp = enemyMaxHP;
 		moveTimer = moveTime;
-	}
+        enemyCurHp = enemyMaxHP;
+    }
 
 
 
@@ -101,7 +108,7 @@ public class Enemy : MonoBehaviour
 		Vector3 distance = playerPos.position - transform.position;
 		distance.x = distance.x < 0 ? -1 : 1;
 		
-    rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
+		 rigid.velocity = new Vector2(distance.x * moveSpeed, rigid.velocity.y);
        
 
 		Vector3 scale = transform.localScale;
@@ -123,15 +130,10 @@ public class Enemy : MonoBehaviour
 
 	public void Hit(float damage)
 	{
-		if (enemyCurHp < 0)
-		{
-			enemyCurHp = 0;
-		}
-
 		enemyCurHp -= damage;
 		enemyHP.SetEnemyHp(enemyMaxHP, enemyCurHp);
 
-		if (enemyCurHp == 0f)
+		if (enemyCurHp <= 0f)
 		{
 			Destroy(gameObject);
 

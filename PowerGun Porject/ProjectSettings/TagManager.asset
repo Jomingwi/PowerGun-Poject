@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Bullet
   - Skill
+  - EnemyBoss
+  - EnemyWeapon
   layers:
   - Default
   - TransparentFX

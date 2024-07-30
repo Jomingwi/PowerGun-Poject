@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
-  moveSpeed: 3
+  moveSpeed: 2
   enemyCurHp: 0
   enemyMaxHP: 15
   moveTimer: 0
