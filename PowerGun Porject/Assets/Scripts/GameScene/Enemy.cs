@@ -72,6 +72,7 @@ public class Enemy : MonoBehaviour
 
 	private void Update()
 	{
+		if(gameManager.Player == null) { return; }
 		enemyGravityCheck();
 		moving();
 	}

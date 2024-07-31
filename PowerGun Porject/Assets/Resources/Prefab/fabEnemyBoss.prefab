@@ -223,7 +223,7 @@ MonoBehaviour:
   bossCurHp: 0
   groundCheckLength: 0
   isGround: 0
-  dashSpeed: 10
+  dashSpeed: 20
   throwForce: {x: 7, y: 0}
   objThrowWeapon: {fileID: 7712699360969541165, guid: 9a7bf2adacef16748ada7c7eeb8b58e9, type: 3}
   trsWeapon: {fileID: 360850564922461881}

@@ -417,9 +417,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1236372233}
   - {fileID: 633106321}
   - {fileID: 1400222998}
-  - {fileID: 1236372233}
   m_Father: {fileID: 2117973448}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1298,7 +1298,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &633106321
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4108,9 +4108,6 @@ MonoBehaviour:
   btnGameSet: {fileID: 2018876510}
   btnGameExit: {fileID: 1643243624}
   StartScene: {fileID: 953593113}
-  objExitCheck: {fileID: 204370817}
-  btnExitOk: {fileID: 633106322}
-  btnExitCancel: {fileID: 1400222999}
   btnEasy: {fileID: 583828182}
   btnNormal: {fileID: 1469621173}
   btnHard: {fileID: 432934012}
@@ -4118,6 +4115,9 @@ MonoBehaviour:
   difficult: {fileID: 912837739}
   btnKeySetExit: {fileID: 154677709}
   gameKey: {fileID: 615103529}
+  objExitCheck: {fileID: 204370817}
+  btnExitOk: {fileID: 633106322}
+  btnExitCancel: {fileID: 1400222999}
 --- !u!1 &2018876508
 GameObject:
   m_ObjectHideFlags: 0

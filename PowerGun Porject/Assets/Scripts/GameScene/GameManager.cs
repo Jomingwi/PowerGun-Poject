@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.IO;
+using System.Runtime.InteropServices;
 
 public class GameManager : MonoBehaviour
 {
@@ -38,14 +40,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform trsBossPos;
     public Transform TrsBossPos => trsBossPos;
 
-
-
-
     [Header("게임 오버")]
-    [SerializeField] GameObject objGameOver;
+    [SerializeField] GameObject objGameClear;
     [SerializeField] TMP_Text textgameClear;
-        
 
+    [SerializeField] GameObject objGameOver;
+    [SerializeField] TMP_Text textGameOver;
+
+
+    [Header("게임 시작")]
+    [SerializeField] TMP_Text textGameStart;
+
+
+
+    
 
 
     bool isSpawnBoss = false;
@@ -99,23 +107,82 @@ public class GameManager : MonoBehaviour
         isSpawnBoss = false;
         enemySpawnCount = 0;
         objGameOver.SetActive(false);
+       
 
         //난이도 설정
         int difficult = PlayerPrefs.GetInt("DifficultKey", 1);
         curDifficulty = (Difficulty)difficult;
+
+        
+    }
+
+    private void difficultySpawnCount(Difficulty difficulty)
+    {
+        if (difficulty == Difficulty.Easy) { enemyMaxSpawnCount = 10; }
+        if (difficulty == Difficulty.Hard) { enemyMaxSpawnCount = 30; }
     }
 
     private void Start()
     {
         mainCam = Camera.main;
         enemyCreate();
+        StartCoroutine(doStartText());
     }
 
+    IEnumerator doStartText()
+    {
+        Color color = textGameStart.color;
+        color.a = 0f;
+        textGameStart.color = color;
+
+        while (true)
+        {
+            color = textGameStart.color;
+            color.a += Time.deltaTime;
+            if (color.a > 1.0f)
+            {
+                color.a = 1.0f;
+            }
+
+            textGameStart.color = color;
+            if (color.a == 1.0f)
+            {
+                break;
+            }
+            yield return null;
+
+        }
+
+        while (true)
+        {
+            color = textGameStart.color;
+            color.a -= Time.deltaTime;
+            if (color.a < 0.0f)
+            {
+                color.a = 0.0f;
+            }
+
+            textGameStart.color = color;
+            if (color.a == 0.0f)
+            {
+                break;
+            }
+            yield return null;
+        }
+
+        Destroy(textGameStart.gameObject);
+    }
+
+
+
+  
 
     public void enemyCreate()
     {
 
         if (isSpawn == false) { return; }
+        difficultySpawnCount(curDifficulty);
+
         for (int i = 0; i < enemyMaxSpawnCount; i++)
         {
             if (enemySpawnCount < enemyMaxSpawnCount)
@@ -128,7 +195,7 @@ public class GameManager : MonoBehaviour
                 float y = Random.Range(boxcoll.bounds.min.y, boxcoll.bounds.max.y);
                 defaultPos.x = x;
                 defaultPos.y = y;
-
+                
                 GameObject go = Instantiate(listEnemy[iRand], defaultPos, Quaternion.identity, trsSpawnPos);
                 Enemy goSc = go.GetComponent<Enemy>();
                 goSc.difficultyHp(curDifficulty);
@@ -231,10 +298,22 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void GameClear()
+    {
+        objGameClear.SetActive(true);
+        Invoke("gameClearScreen", 5);
+    }
+
     public void GameOver()
     {
         objGameOver.SetActive(true);
         Invoke("gameOverScreen", 5);
+    }
+
+    private void gameClearScreen()
+    {
+        objGameClear.SetActive(false);
+        SceneManager.LoadScene(0);
     }
 
     private void gameOverScreen()
@@ -242,6 +321,11 @@ public class GameManager : MonoBehaviour
         objGameOver.SetActive(false);
         SceneManager.LoadScene(0);
     }
+
+   
+
+  
+
 }
 
 

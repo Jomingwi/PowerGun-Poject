@@ -147,7 +147,7 @@ public class PlayerController : MonoBehaviour
         coolTimeCheck();
         groundCheck();
         playerHit();
-   
+
         moving();
         jump();
         dash();
@@ -183,7 +183,7 @@ public class PlayerController : MonoBehaviour
 
     private void slide()
     {
-        if(isStun == true) { return; }
+        if (isStun == true) { return; }
 
         if (Input.GetKeyDown(KeyCode.LeftControl) == true && slideCoolTimer == 0f && slideTimer == 0f)
         {
@@ -203,8 +203,8 @@ public class PlayerController : MonoBehaviour
     private void dash()
     {
 
-    if (isStun == true) { return; }
-    if (Input.GetKeyDown(KeyCode.LeftShift) == true && dashCoolTimer == 0f && dashTimer == 0f)
+        if (isStun == true) { return; }
+        if (Input.GetKeyDown(KeyCode.LeftShift) == true && dashCoolTimer == 0f && dashTimer == 0f)
         {
             isDash = true;
             dashCoolTimer = dashCoolTime;
@@ -304,8 +304,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void jump()
     {
-    if (isStun == true) { return; }
-    if (isGround == false)
+        if (isStun == true) { return; }
+        if (isGround == false)
         {
             if (doubleJumpCoolTimer == 0 && Input.GetKeyDown(KeyCode.Space) == true)
             {
@@ -326,7 +326,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void gravityCheck()
     {
-        if (dashTimer > 0f || slideTimer > 0f || playerDamageCoolTimer > 0f )
+        if (dashTimer > 0f || slideTimer > 0f || playerDamageCoolTimer > 0f)
         {
             return;
         }
@@ -363,9 +363,9 @@ public class PlayerController : MonoBehaviour
     /// 플레이어 움직임과 속도
     /// </summary>
     private void moving()
-  {
-    if (isStun == true) { return; }
-    if (dashTimer > 0 || slideTimer > 0 || playerDamageCoolTimer > 0)
+    {
+        if (isStun == true) { return; }
+        if (dashTimer > 0 || slideTimer > 0 || playerDamageCoolTimer > 0)
         {
             return;
         }
@@ -452,8 +452,12 @@ public class PlayerController : MonoBehaviour
     {
         playerHit();
         curHp -= damage;
+        if (curHp < 0)
+        {
+            curHp = 0;
+        }
         SetPlayerHp(maxHp, curHp);
-
+        
 
         if (curHp <= 0)
         {
@@ -463,25 +467,25 @@ public class PlayerController : MonoBehaviour
 
             goSc.ImageSize(spriteRenderer.sprite.rect.width);
 
-            //다시하기 메뉴와 나가기 메뉴가 뜨도록 만들어야함
+            gameManager.GameOver();
         }
     }
 
-  public void playerStun(bool _isStun)
+    public void playerStun(bool _isStun)
     {
-        if(_isStun == true)
+        if (_isStun == true)
         {
-           isStun = true;
-           stunTimer = stunTime;
-         }
-       
+            isStun = true;
+            stunTimer = stunTime;
+        }
+
     }
 
     private void stunCheck()
     {
 
-   
-    
+
+
         if (stunTimer > 0)
         {
             stunTimer -= Time.deltaTime;

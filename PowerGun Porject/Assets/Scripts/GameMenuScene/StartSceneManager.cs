@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class StartSceneManager : MonoBehaviour
 {
@@ -10,9 +11,8 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField] Button btnGameSet;
     [SerializeField] Button btnGameExit;
     [SerializeField] GameObject StartScene;
-    [SerializeField] GameObject objExitCheck;
-    [SerializeField] Button btnExitOk;
-    [SerializeField] Button btnExitCancel;
+    
+    
        
     [Header("난이도")]
     [SerializeField] Button btnEasy;
@@ -24,7 +24,12 @@ public class StartSceneManager : MonoBehaviour
     [Header("단축키")]
     [SerializeField] Button btnKeySetExit;
     [SerializeField] GameObject gameKey;
-    
+
+    [Header("게임 종료 체크")]
+    [SerializeField] GameObject objExitCheck;
+    [SerializeField] Button btnExitOk;
+    [SerializeField] Button btnExitCancel;
+
 
 
     private void Awake()
@@ -33,7 +38,7 @@ public class StartSceneManager : MonoBehaviour
 
         btnGameStart.onClick.AddListener(gameStart);
         btnGameSet.onClick.AddListener(gameSetting);
-        btnGameExit.onClick.AddListener(gameExit);
+        btnGameExit.onClick.AddListener(gameExitChecK);
         btnKeySetExit.onClick.AddListener(gameSetExit);
         btnDifficultExit.onClick.AddListener(difficultSetExit);
 
@@ -41,10 +46,12 @@ public class StartSceneManager : MonoBehaviour
         btnNormal.onClick.AddListener(difficultNoraml);
         btnHard.onClick.AddListener(difficultHard);
 
+        btnExitOk.onClick.AddListener(gameExit);
+        btnExitCancel.onClick.AddListener(gameExitCancle);
 
         difficult.SetActive(false);
         gameKey.SetActive(false);
-         objExitCheck.SetActive(false);
+        objExitCheck.SetActive(false);
 
   }
 
@@ -92,11 +99,22 @@ public class StartSceneManager : MonoBehaviour
         StartScene.SetActive(true);
     }
 
+    private void gameExitChecK()
+    {
+        objExitCheck.SetActive(true);
+        StartScene.SetActive(false);
+    }
+
+    private void gameExitCancle()
+    {
+        objExitCheck.SetActive(false);
+        StartScene.SetActive(true);
+    }
 
 
     private void gameExit()
     {
-      objExitCheck.SetActive(true);
+      
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
