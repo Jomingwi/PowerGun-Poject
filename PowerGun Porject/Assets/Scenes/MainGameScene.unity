@@ -1442,7 +1442,7 @@ MonoBehaviour:
   trsSpawnPos: {fileID: 1911775903}
   trsDynamicObject: {fileID: 815387334}
   isSpawn: 0
-  enemyMaxSpawnCount: 0
+  enemyMaxSpawnCount: 1
   fabEnemyHP: {fileID: 5124985885779731280, guid: b1a4f54ea0231f340a37f4852f5d4989, type: 3}
   trsHpBarPos: {fileID: 18148470}
   slider: {fileID: 1666832844}

@@ -10,7 +10,10 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField] Button btnGameSet;
     [SerializeField] Button btnGameExit;
     [SerializeField] GameObject StartScene;
-
+    [SerializeField] GameObject objExitCheck;
+    [SerializeField] Button btnExitOk;
+    [SerializeField] Button btnExitCancel;
+       
     [Header("≥≠¿Ãµµ")]
     [SerializeField] Button btnEasy;
     [SerializeField] Button btnNormal;
@@ -41,8 +44,9 @@ public class StartSceneManager : MonoBehaviour
 
         difficult.SetActive(false);
         gameKey.SetActive(false);
+         objExitCheck.SetActive(false);
 
-    }
+  }
 
     private void difficultEasy()
     {
@@ -92,7 +96,7 @@ public class StartSceneManager : MonoBehaviour
 
     private void gameExit()
     {
-
+      objExitCheck.SetActive(true);
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

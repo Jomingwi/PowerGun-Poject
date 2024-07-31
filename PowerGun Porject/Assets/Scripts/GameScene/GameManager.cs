@@ -199,9 +199,8 @@ public class GameManager : MonoBehaviour
             GameObject go = Instantiate(fabBoss, trsBossPos.transform.position, Quaternion.identity, trsSpawnPos);
             EnemyBoss goSc = go.GetComponent<EnemyBoss>();
             goSc.difficultyHp(curDifficulty);
+            goSc.nextPattern(curDifficulty);
             bossinitSlider(goSc.bossMaxHp);
-
-          
         }
     }
 

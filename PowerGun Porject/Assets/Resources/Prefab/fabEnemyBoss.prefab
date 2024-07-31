@@ -224,11 +224,11 @@ MonoBehaviour:
   groundCheckLength: 0
   isGround: 0
   dashSpeed: 10
-  throwForce: {x: 10, y: 0}
+  throwForce: {x: 7, y: 0}
   objThrowWeapon: {fileID: 7712699360969541165, guid: 9a7bf2adacef16748ada7c7eeb8b58e9, type: 3}
   trsWeapon: {fileID: 360850564922461881}
   trsHand: {fileID: 6319420551162467689}
-  jumpForce: 5
+  jumpForce: 20
   playerStunTime: 0
   playerStunTimer: 0
   gameClear: {fileID: 0}
